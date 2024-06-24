@@ -1,18 +1,11 @@
 import React from 'react';
 import './globals.css';
 import '../styles/theme.css';
-import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  SignOutButton,
-  // SignedIn,
-  // UserButton,
-} from '@clerk/nextjs';
+import { ClerkProvider } from '@clerk/nextjs';
 
 import { Inter, Space_Grotesk } from 'next/font/google';
 import type { Metadata } from 'next';
+import { ThemeProvider } from '@/context/themeProvider';
 
 export const metadata: Metadata = {
   title: 'Dev Overflow',
@@ -28,6 +21,7 @@ const inter = Inter({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   variable: '--inter',
 });
+
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
@@ -36,19 +30,20 @@ const spaceGrotesk = Space_Grotesk({
 
 const layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <ClerkProvider>
-      <html lang='en'>
-        <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-          <SignedIn>
-            <SignOutButton />
-          </SignedIn>
-          <main>{children}</main>
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang='en'>
+      <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
+        <ClerkProvider
+          appearance={{
+            elements: {
+              formButtonPrimary: 'primary-gradient',
+              fotterActionLink: 'primary-text-gradient hover:text-primary-500',
+            },
+          }}
+        >
+          <ThemeProvider>{children}</ThemeProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 };
 
