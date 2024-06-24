@@ -54,7 +54,7 @@ const config = {
           400: '#858EAD',
         },
         'accent-blue': '#1DA1F2',
-        border: 'hsl(var(--border))',
+        // border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',

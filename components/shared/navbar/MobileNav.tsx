@@ -13,7 +13,7 @@ import { SignedOut } from '@clerk/nextjs';
 import { Button } from '../../ui/button';
 import { usePathname } from 'next/navigation';
 
-const NavContent = () => {
+export const NavContent = () => {
   const pathName = usePathname();
   return (
     <section className='no-focus flex w-[302px]  flex-col gap-2  pt-16 '>
