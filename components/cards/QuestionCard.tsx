@@ -3,7 +3,7 @@ import React from 'react';
 import RedenerTag from '../shared/RedenerTag';
 import Link from 'next/link';
 import Metric from '../shared/Metric';
-import { getTimeStamp } from '@/lib/utils';
+import { formatNumber, getTimeStamp } from '@/lib/utils';
 
 interface QuestionProps {
   _id: string;
@@ -66,21 +66,21 @@ const QuestionCard = ({
         <Metric
           imageUrl='/assets/icons/like.svg'
           alt='Upvotes'
-          value={upvotes}
+          value={formatNumber(upvotes)}
           title=' Votes'
           textStyles='small-medium text-dark400_light800'
         />
         <Metric
           imageUrl='/assets/icons/message.svg'
           alt='messages'
-          value={1}
+          value={formatNumber(1)}
           title=' Answers'
           textStyles='small-medium text-dark400_light800'
         />
         <Metric
           imageUrl='/assets/icons/eye.svg'
           alt='eye'
-          value={views}
+          value={formatNumber(views)}
           title=' Views'
           textStyles='small-medium text-dark400_light800'
         />
