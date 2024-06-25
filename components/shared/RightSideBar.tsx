@@ -2,31 +2,33 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import RedenerTag from './RedenerTag';
-import { count } from 'console';
 
 const questions = [
   {
-    _id: 1,
+    _id: '1',
     question:
       'Would it be appropriate to point out an error in another paper during a referee report?',
   },
-  { _id: 2, question: 'How can an airconditioning machine exist?' },
-  { _id: 3, question: 'Interrogated every time crossing UK Border as citizen' },
-  { _id: 4, question: 'Low digit addition generator' },
+  { _id: '2', question: 'How can an airconditioning machine exist?' },
   {
-    _id: 5,
+    _id: '3',
+    question: 'Interrogated every time crossing UK Border as citizen',
+  },
+  { _id: '4', question: 'Low digit addition generator' },
+  {
+    _id: '5',
     question: 'What is an example of 3 numbers that do not make up a vector?',
   },
 ];
 
 const tags = [
-  { _id: 1, name: 'javascript', totalQuestions: 2222 },
-  { _id: 2, name: 'next', totalQuestions: 2222 },
-  { _id: 3, name: 'react', totalQuestions: 2222 },
-  { _id: 4, name: 'phyton', totalQuestions: 2222 },
-  { _id: 5, name: 'javascript', totalQuestions: 2222 },
-  { _id: 6, name: 'postgresql', totalQuestions: 2222 },
-  { _id: 7, name: 'machine learning', totalQuestions: 2222 },
+  { _id: '1', name: 'javascript', totalQuestions: 2222 },
+  { _id: '2', name: 'next', totalQuestions: 2222 },
+  { _id: '3', name: 'react', totalQuestions: 2222 },
+  { _id: '4', name: 'phyton', totalQuestions: 2222 },
+  { _id: '5', name: 'javascript', totalQuestions: 2222 },
+  { _id: '6', name: 'postgresql', totalQuestions: 2222 },
+  { _id: '7', name: 'machine learning', totalQuestions: 2222 },
 ];
 
 const RightSideBar = () => {

@@ -1,7 +1,34 @@
+import QuestionCard from '@/components/cards/QuestionCard';
+import Filter from '@/components/shared/Filter';
+import NoResult from '@/components/shared/NoResult';
 import LocalSearchBar from '@/components/shared/search/LocalSearchBar';
 import { Button } from '@/components/ui/button';
+import { HomePageFilters } from '@/constants/filters';
+
 import Link from 'next/link';
 import React from 'react';
+
+const questions = [
+  {
+    _id: '1',
+    title:
+      'The Lightning Component c:LWC_PizzaTracker generated invalid output for field status. Error How to solve this',
+    tags: [
+      { _id: '1', name: 'javascript', totalQuestions: 2222 },
+      { _id: '2', name: 'next', totalQuestions: 2222 },
+      { _id: '3', name: 'react', totalQuestions: 2222 },
+    ],
+    author: {
+      _id: '11',
+      picture: 'avatar.svg',
+      name: 'Boris',
+    },
+    createdAt: new Date(),
+    views: 5200,
+    answers: 900,
+    upvotes: 1200,
+  },
+];
 
 const Home = () => {
   return (
@@ -16,7 +43,7 @@ const Home = () => {
           </Button>
         </Link>
       </div>
-      <div className='mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center'>
+      <div className='mt-11 flex flex-col justify-between  gap-5 '>
         <LocalSearchBar
           iconPosition='left'
           route='/'
@@ -24,7 +51,27 @@ const Home = () => {
           imgSrc='/assets/icons/search.svg'
           placeholder='Search for Questions here...'
         />{' '}
-        Filters
+        <Filter
+          filters={HomePageFilters}
+          otherClasses='md:min-h-[56px] min-w-[170px]'
+          containerClasses='hidden max-md:flex'
+        />
+      </div>
+      <div className='mt-6 flex w-full flex-col gap-6'>
+        {questions?.length > 0 ? (
+          questions.map((question) => (
+            <QuestionCard key={question._id} {...question} />
+          ))
+        ) : (
+          <NoResult
+            linkTitle='Ask a Question'
+            title='There’s no question to show'
+            link='/ask-a-question'
+            description='Be the first to break the silence! 🚀 Ask a Question and kickstart the
+              discussion. our query could be the next big thing others learn from. Get
+              involved! 💡'
+          />
+        )}
       </div>
     </>
   );
