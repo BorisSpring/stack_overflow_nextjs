@@ -3,7 +3,6 @@ import { Webhook } from 'svix';
 import { headers } from 'next/headers';
 import { WebhookEvent } from '@clerk/nextjs/server';
 import { createUser, deleteUser } from '@/lib/actions/user.action';
-import image from 'next/image';
 import { NextResponse } from 'next/server';
 import { updateUser } from '@/lib/actions/question.action';
 
@@ -87,7 +86,8 @@ export async function POST(req: Request) {
   }
 
   if (eventType === 'user.deleted') {
-    const deletedUser = await deleteUser({ clerkId: id });
+    const { id } = evt.data;
+    const deletedUser = await deleteUser({ clerkId: id! });
 
     return NextResponse.json({ deletedUser });
   }
