@@ -39,7 +39,7 @@ const Home = async () => {
         />
       </div>
       <div className='mt-6 flex w-full flex-col gap-6'>
-        {results.questions?.length > 0 ? (
+        {results !== undefined && results.questions?.length > 0 ? (
           results.questions.map((question) => (
             <QuestionCard
               key={question._id}
