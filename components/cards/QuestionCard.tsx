@@ -11,11 +11,11 @@ interface QuestionProps {
   tags?: { _id: string; name: string }[];
   author: {
     _id: string;
-    picture: string;
     name: string;
+    picture: string;
   };
   views: number;
-  answers: number;
+  answers: Array<object>;
   upvotes: number;
   createdAt: Date;
 }
@@ -48,7 +48,12 @@ const QuestionCard = ({
       {/* tags */}
       <div className='flex flex-wrap gap-3'>
         {tags?.map((tag) => (
-          <RedenerTag {...tag} key={tag._id} showCount={false} />
+          <RedenerTag
+            name={tag.name}
+            _id={tag._id}
+            key={tag._id}
+            showCount={false}
+          />
         ))}
       </div>
 
@@ -73,7 +78,7 @@ const QuestionCard = ({
         <Metric
           imageUrl='/assets/icons/message.svg'
           alt='messages'
-          value={formatNumber(1)}
+          value={formatNumber(answers?.length ?? 0)}
           title=' Answers'
           textStyles='small-medium text-dark400_light800'
         />

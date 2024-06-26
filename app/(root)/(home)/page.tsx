@@ -4,40 +4,21 @@ import NoResult from '@/components/shared/NoResult';
 import LocalSearchBar from '@/components/shared/search/LocalSearchBar';
 import { Button } from '@/components/ui/button';
 import { HomePageFilters } from '@/constants/filters';
+import { getQuestions } from '@/lib/actions/question.action';
 
 import Link from 'next/link';
 import React from 'react';
 
-const questions = [
-  {
-    _id: '1',
-    title:
-      'The Lightning Component c:LWC_PizzaTracker generated invalid output for field status. Error How to solve this',
-    tags: [
-      { _id: '1', name: 'javascript', totalQuestions: 2222 },
-      { _id: '2', name: 'next', totalQuestions: 2222 },
-      { _id: '3', name: 'react', totalQuestions: 2222 },
-    ],
-    author: {
-      _id: '11',
-      picture: 'avatar.svg',
-      name: 'Boris',
-    },
-    createdAt: new Date(),
-    views: 5200,
-    answers: 900,
-    upvotes: 1200,
-  },
-];
+const Home = async () => {
+  const results = await getQuestions({});
 
-const Home = () => {
   return (
     <>
       <div className='flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center'>
         <h2 className='h2-bold text-dark100_light900 text-center font-bold sm:text-left'>
           All Questions
         </h2>
-        <Link href='/ask-question' className='flex justify-end '>
+        <Link href='/ask-a-question' className='flex justify-end '>
           <Button className='primary-gradient   paragraph-medium rounded-[10px] px-4 pt-3 text-light-900 max-sm:w-full '>
             Ask Question
           </Button>
@@ -58,18 +39,26 @@ const Home = () => {
         />
       </div>
       <div className='mt-6 flex w-full flex-col gap-6'>
-        {questions?.length > 0 ? (
-          questions.map((question) => (
-            <QuestionCard key={question._id} {...question} />
+        {results.questions?.length > 0 ? (
+          results.questions.map((question) => (
+            <QuestionCard
+              key={question._id}
+              _id={question._id}
+              title={question.title}
+              tags={question.tags}
+              author={question.author}
+              upvotes={question.upvotes}
+              views={question.views}
+              answers={question.answers}
+              createdAt={question.createdAt}
+            />
           ))
         ) : (
           <NoResult
-            linkTitle='Ask a Question'
             title='There’s no question to show'
-            link='/ask-a-question'
-            description='Be the first to break the silence! 🚀 Ask a Question and kickstart the
-              discussion. our query could be the next big thing others learn from. Get
-              involved! 💡'
+            description='Be the first to break the silence! 🚀 Ask a Question and kickstart the discussion. our query could be the next big thing others learn from. Get involved! 💡'
+            link='/ask-question'
+            linkTitle='Ask a Question'
           />
         )}
       </div>
