@@ -7,18 +7,17 @@ import React from 'react';
 const AskQuestion = async () => {
   const { userId } = auth();
 
-  if (!userId) redirect('/sign-in');
-
   const mongoUser = await getUserById({
-    // mock
-    userId: 'd21b1f80-21c4-44e0-92ef-a0cfaeb6f472',
+    userId,
   });
+
+  if (!mongoUser?._id) redirect('/sign-in');
 
   return (
     <div>
       <h1 className='h1-bold text-dark100_light900 '>Ask a Question</h1>
       <div className='mt-9'>
-        <Question mongoUserId={JSON.stringify(mongoUser._id)} />
+        <Question mongoUserId={JSON.stringify(mongoUser?._id)} />
       </div>
     </div>
   );
