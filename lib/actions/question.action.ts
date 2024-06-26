@@ -8,11 +8,15 @@ import Tag from '@/database/tag.model';
 import User from '@/database/user.model';
 
 // shared types
-import { CreateQuestionParams, getQuestionsParams } from './shared.types';
+import {
+  CreateQuestionParams,
+  UpdateUserParams,
+  GetQuestionsParams,
+} from './shared.types';
 import { revalidatePath } from 'next/cache';
 import mongoose from 'mongoose';
 
-export async function getQuestions(params: getQuestionsParams) {
+export async function getQuestions(params: GetQuestionsParams) {
   try {
     connectToDatabase();
     const questions = await Question.find({})
@@ -56,4 +60,12 @@ export async function createQuestion(params: CreateQuestionParams) {
   } finally {
     session.endSession();
   }
+}
+
+export async function updateUser(params: UpdateUserParams) {
+  const { clerkId, updatedData, path } = params;
+
+  await User.findOneAndUpdate({ clerkId }, updatedData);
+
+  revalidatePath(path);
 }

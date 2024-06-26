@@ -1,7 +1,7 @@
 import { IUser } from '@/database/user.model';
 import { Schema } from 'mongoose';
 
-export interface getQuestionsParams {
+export interface GetQuestionsParams {
   page?: number;
   pageSize?: number;
   searchQuery?: string;
@@ -14,4 +14,27 @@ export interface CreateQuestionParams {
   tags: string[];
   author: Schema.Types.ObjectId | IUser;
   path: string;
+}
+
+export interface CreateUserParams {
+  email: string;
+  clerkId: string;
+  name: string;
+  username?: string;
+  picture: string;
+}
+
+export interface UpdateUserParams {
+  clerkId: string;
+  updatedData: {
+    name: string;
+    email: string;
+    username: string;
+    picture: string;
+  };
+  path: string;
+}
+
+export interface DeleteUserParams {
+  clerkId: string;
 }
