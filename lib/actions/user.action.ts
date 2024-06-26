@@ -28,9 +28,7 @@ export async function createUser(userData: CreateUserParams) {
   try {
     connectToDatabase();
 
-    const createdUser = await User.create({
-      userData,
-    });
+    const createdUser = await User.create(userData);
 
     await session.commitTransaction();
 

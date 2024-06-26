@@ -83,9 +83,10 @@ const LeftSideBar = () => {
         <SignedIn>
           <Button>
             <Image
-              src='/assets/icons/au.svg'
+              src='/assets/icons/arrow-left.svg'
               alt='logout icon'
               width={24}
+              className='invert-colors flex items-center justify-between gap-5'
               height={24}
             />
             <p className=' text-dark300_light700 base-medium max-lg:hidden'>

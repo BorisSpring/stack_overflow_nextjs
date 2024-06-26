@@ -57,9 +57,7 @@ export async function POST(req: Request) {
   const eventType = evt.type;
 
   console.log(eventType);
-  await Tag.create({
-    name: 'safdafsda',
-  });
+
   if (eventType === 'user.created') {
     const { id, username, first_name, last_name, image_url, email_addresses } =
       evt.data;

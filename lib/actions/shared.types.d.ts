@@ -20,7 +20,7 @@ export interface CreateUserParams {
   email: string;
   clerkId: string;
   name: string;
-  username?: string;
+  username?: string | null;
   picture: string;
 }
 
