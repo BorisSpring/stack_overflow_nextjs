@@ -20,10 +20,6 @@ interface Props {
 }
 
 const Filter = ({ filters, otherClasses, containerClasses }: Props) => {
-  // const onHandleSelect(value: string){
-  //     console.log(value)
-  // }
-
   return (
     <>
       <div className={`relative ${containerClasses}`}>
