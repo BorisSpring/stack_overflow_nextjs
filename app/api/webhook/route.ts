@@ -5,6 +5,8 @@ import { WebhookEvent } from '@clerk/nextjs/server';
 import { createUser, deleteUser } from '@/lib/actions/user.action';
 import { NextResponse } from 'next/server';
 import { updateUser } from '@/lib/actions/question.action';
+import Tag from '@/database/tag.model';
+import console from 'console';
 
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
@@ -55,6 +57,9 @@ export async function POST(req: Request) {
   const eventType = evt.type;
 
   console.log(eventType);
+  await Tag.create({
+    name: 'safdafsda',
+  });
   if (eventType === 'user.created') {
     const { id, username, first_name, last_name, image_url, email_addresses } =
       evt.data;
