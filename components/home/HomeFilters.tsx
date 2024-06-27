@@ -2,9 +2,13 @@
 import { HomePageFilters } from '@/constants/filters';
 import React from 'react';
 import { Button } from '../ui/button';
+import { usePathname } from 'next/navigation';
 
 const HomeFilters = () => {
   const isActive = 'frequent';
+  const pathName = usePathname();
+  if (pathName) return;
+
   return (
     <div className='mt-2 hidden flex-wrap gap-3 md:flex'>
       {HomePageFilters.map(({ name, value }) => (

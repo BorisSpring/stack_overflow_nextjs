@@ -2,7 +2,11 @@
 
 import User from '@/database/user.model';
 import { connectToDatabase } from '../mongoose';
-import { CreateUserParams, DeleteUserParams } from './shared.types';
+import {
+  CreateUserParams,
+  DeleteUserParams,
+  GetAllUsersParams,
+} from './shared.types';
 import mongoose from 'mongoose';
 import Question from '@/database/question.model';
 
@@ -63,5 +67,19 @@ export async function deleteUser(params: DeleteUserParams) {
     await session.abortTransaction();
   } finally {
     session.endSession();
+  }
+}
+
+export async function getAllUsers(params: GetAllUsersParams) {
+  try {
+    connectToDatabase();
+    // const { page = 1, pageSize = 20, filter, searchQuery } = params;
+
+    const users = await User.find({}).sort({ joinedAt: -1 });
+
+    return { users };
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 }

@@ -31,18 +31,19 @@ const Filter = ({ filters, otherClasses, containerClasses }: Props) => {
               <SelectValue placeholder='Select A Filter' />
             </div>
           </SelectTrigger>
-          <SelectContent className=' rounded-[10px] bg-light-900 dark:border-none dark:bg-dark-400'>
-            <SelectGroup className='z-[9999]'>
-              {filters.map(({ name, value }) => (
-                <SelectItem
-                  className='hover:background-light700_dark300 transition-all duration-200'
-                  value={value}
-                  key={value}
-                >
-                  {name}
-                </SelectItem>
-              ))}
-            </SelectGroup>
+          <SelectContent className='rounded-[10px] bg-light-900  dark:border-none  dark:bg-dark-400'>
+            {filters.map(({ name, value }) => (
+              <SelectGroup
+                key={value}
+                className={`hover:background-light800_dark300 body-semibold z-[9999] cursor-pointer transition-all duration-200   ${
+                  value === 'old_users'
+                    ? 'background-light800_dark300 text-primary-500 dark:bg-dark-400'
+                    : 'text-dark500_light500 '
+                } `}
+              >
+                <SelectItem value={value}>{name}</SelectItem>
+              </SelectGroup>
+            ))}
           </SelectContent>
         </Select>
       </div>
