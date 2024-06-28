@@ -15,7 +15,7 @@ export interface IUser extends Document {
   saved: Schema.Types.ObjectId[];
 }
 
-const UserSchema = new Schema({
+const UserSchema = new Schema<IUser>({
   clerkId: { type: String, required: true },
   name: {
     type: String,
@@ -32,11 +32,9 @@ const UserSchema = new Schema({
   portfolioWebsite: String,
   reputation: { type: Number, default: 0 },
   joinedAt: { type: Date, required: true, default: Date.now },
-  saved: [
-    { type: Schema.Types.ObjectId, ref: 'SomeOtherModel', required: false },
-  ],
+  saved: [{ type: Schema.Types.ObjectId, ref: 'Question', required: false }],
 });
 
-const User = models.User || model('User', UserSchema);
+const User = models?.User || model<IUser>('User', UserSchema);
 
 export default User;

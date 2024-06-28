@@ -5,6 +5,7 @@ import LocalSearchBar from '@/components/shared/search/LocalSearchBar';
 import { Button } from '@/components/ui/button';
 import { HomePageFilters } from '@/constants/filters';
 import { getQuestions } from '@/lib/actions/question.action';
+import { QuestionCardProps } from '@/lib/actions/shared.types';
 
 import Link from 'next/link';
 import React from 'react';
@@ -40,7 +41,7 @@ const Home = async () => {
       </div>
       <div className='mt-6 flex w-full flex-col gap-6'>
         {results !== undefined && results.questions?.length > 0 ? (
-          results.questions.map((question) => (
+          results.questions.map((question: QuestionCardProps) => (
             <QuestionCard
               key={question._id}
               _id={question._id}

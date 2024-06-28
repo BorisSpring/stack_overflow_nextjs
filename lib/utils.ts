@@ -1,5 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { connectToDatabase } from './mongoose';
+import mongoose from 'mongoose';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -43,3 +45,35 @@ export const formatNumber = (num: number): string => {
     return num.toString();
   }
 };
+
+export async function executeMethodWithTryAndTransactiona(
+  executeFunction: any
+) {
+  try {
+    connectToDatabase();
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    await executeFunction();
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    console.error(error);
+    throw error;
+  } finally {
+    await session.endSession();
+  }
+}
+
+export async function executeMethodWithTryCatch(executeFunction: any) {
+  try {
+    connectToDatabase();
+    return await executeFunction();
+  } catch (error) {
+    console.error(error);
+  }
+}

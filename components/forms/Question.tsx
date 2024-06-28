@@ -21,6 +21,7 @@ import { Badge } from '../ui/badge';
 import Image from 'next/image';
 import { createQuestion } from '@/lib/actions/question.action';
 import { useRouter, usePathname } from 'next/navigation';
+import { useTheme } from '@/context/themeProvider';
 
 const type: any = 'create';
 
@@ -32,6 +33,7 @@ export function Question({ mongoUserId }: Props) {
   const editorRef = useRef(null);
   const router = useRouter();
   const pathName = usePathname();
+  const { mode } = useTheme();
 
   const form = useForm<z.infer<typeof questionSchema>>({
     resolver: zodResolver(questionSchema),
@@ -81,7 +83,7 @@ export function Question({ mongoUserId }: Props) {
           });
         }
         if (!field.value.includes(tagValue as never)) {
-          form.setValue('tags', [...form.getValues('tags'), tagValue]);
+          form.setValue('tags', [tagValue, ...form.getValues('tags')]);
           tagInput.value = '';
           form.clearErrors('tags');
         } else {
@@ -168,6 +170,8 @@ export function Question({ mongoUserId }: Props) {
                       'removeformat |  | help',
                     content_style:
                       'body { font-family: Inter; font-size:16px }',
+                    skin: `${mode === 'dark' ? 'oxide-dark' : 'oxide'}`,
+                    content_css: `${mode === 'dark' ? 'dark' : 'light'}`,
                   }}
                 />
               </FormControl>

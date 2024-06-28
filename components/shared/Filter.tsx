@@ -35,13 +35,15 @@ const Filter = ({ filters, otherClasses, containerClasses }: Props) => {
             {filters.map(({ name, value }) => (
               <SelectGroup
                 key={value}
-                className={`hover:background-light800_dark300 body-semibold z-[9999] cursor-pointer transition-all duration-200   ${
+                className={`hover:background-light800_dark300 body-semibold z-[9999] transition-all duration-200   ${
                   value === 'old_users'
                     ? 'background-light800_dark300 text-primary-500 dark:bg-dark-400'
                     : 'text-dark500_light500 '
                 } `}
               >
-                <SelectItem value={value}>{name}</SelectItem>
+                <SelectItem value={value} className=' cursor-pointer '>
+                  {name}
+                </SelectItem>
               </SelectGroup>
             ))}
           </SelectContent>

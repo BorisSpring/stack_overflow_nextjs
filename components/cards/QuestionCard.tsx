@@ -4,21 +4,7 @@ import RedenerTag from '../shared/RedenerTag';
 import Link from 'next/link';
 import Metric from '../shared/Metric';
 import { formatNumber, getTimeStamp } from '@/lib/utils';
-
-interface QuestionProps {
-  _id: string;
-  title: string;
-  tags?: { _id: string; name: string }[];
-  author: {
-    _id: string;
-    name: string;
-    picture: string;
-  };
-  views: number;
-  answers: Array<object>;
-  upvotes: number;
-  createdAt: Date;
-}
+import { QuestionCardProps } from '@/lib/actions/shared.types';
 
 const QuestionCard = ({
   _id,
@@ -29,7 +15,7 @@ const QuestionCard = ({
   views,
   answers,
   upvotes,
-}: QuestionProps) => {
+}: QuestionCardProps) => {
   return (
     <div className='card-wrapper flex flex-col gap-5 rounded-[10px] p-9 sm:px-11'>
       <div className='flex  flex-col-reverse items-start justify-between gap-5 sm:flex-row'>
@@ -68,27 +54,29 @@ const QuestionCard = ({
           isAuthor
           textStyles='body-medium text-dark400_light700'
         />
-        <Metric
-          imageUrl='/assets/icons/like.svg'
-          alt='Upvotes'
-          value={formatNumber(upvotes)}
-          title=' Votes'
-          textStyles='small-medium text-dark400_light800'
-        />
-        <Metric
-          imageUrl='/assets/icons/message.svg'
-          alt='messages'
-          value={formatNumber(answers?.length ?? 0)}
-          title=' Answers'
-          textStyles='small-medium text-dark400_light800'
-        />
-        <Metric
-          imageUrl='/assets/icons/eye.svg'
-          alt='eye'
-          value={formatNumber(views)}
-          title=' Views'
-          textStyles='small-medium text-dark400_light800'
-        />
+        <div className='flex items-center gap-2'>
+          <Metric
+            imageUrl='/assets/icons/like.svg'
+            alt='Upvotes'
+            value={formatNumber(upvotes) || 0}
+            title=' Votes'
+            textStyles='small-medium text-dark400_light800'
+          />
+          <Metric
+            imageUrl='/assets/icons/message.svg'
+            alt='messages'
+            value={formatNumber(answers?.length ?? 0)}
+            title=' Answers'
+            textStyles='small-medium text-dark400_light800'
+          />
+          <Metric
+            imageUrl='/assets/icons/eye.svg'
+            alt='eye'
+            value={formatNumber(views)}
+            title=' Views'
+            textStyles='small-medium text-dark400_light800'
+          />
+        </div>
       </div>
     </div>
   );

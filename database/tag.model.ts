@@ -8,7 +8,7 @@ export interface ITag extends Document {
   followers: Schema.Types.ObjectId[];
 }
 
-const TagSchema = new Schema({
+const TagSchema = new Schema<ITag>({
   name: {
     type: String,
     required: true,
@@ -30,6 +30,6 @@ const TagSchema = new Schema({
   questions: [{ type: Schema.Types.ObjectId, ref: 'Question' }],
 });
 
-const Tag = models.Tag || model('Tag', TagSchema);
+const Tag = models?.Tag || model<ITag>('Tag', TagSchema);
 
 export default Tag;

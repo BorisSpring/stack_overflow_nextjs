@@ -18,12 +18,12 @@ const page = async () => {
           route='/community'
           otherClasses='flex-1'
           imgSrc='/assets/icons/search.svg'
-          placeholder='Search for amazing minds here...'
+          placeholder='Search for tag here...'
         />{' '}
         <Filter
           filters={UserFilters}
-          containerClasses='min-h-[56px] w-full lg:max-w-[207px] lg:min-w-[207px]'
-          otherClasses='h-[56px] body-semibold'
+          containerClasses=' w-full  md:max-w-[207px] md:min-w-[207px]'
+          otherClasses='md:h-[56px] body-semibold'
         />
       </div>
       <section className='mt-10 flex flex-wrap justify-between gap-4'>

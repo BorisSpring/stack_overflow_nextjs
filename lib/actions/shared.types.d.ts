@@ -50,3 +50,67 @@ export interface GetTopInteractiveTagsParams {
   userId: string;
   limit?: number;
 }
+
+export interface GetAllTagsParams {
+  page?: number;
+  pageSize?: number;
+  filter?: string;
+}
+
+export interface GetQuestionByIdParams {
+  questionId: string;
+}
+
+export interface CreateAnswerParams {
+  questionId: string;
+  author: string;
+  content: string;
+  route: string;
+}
+
+export interface getAllAnswersParams {
+  questionId: string;
+}
+
+export interface GetUserByIdParams {
+  userId: string;
+}
+
+export interface DownVoteOrUpvoteParams {
+  userId: string;
+  itemId: string;
+  route: string;
+  hasUpVoted: boolean;
+  hasDownVoted: boolean;
+  type: string;
+}
+
+export interface SaveQuestionParams {
+  questionId: string;
+  route: string;
+  userId: string;
+  isSaved: boolean;
+}
+
+export interface findSavedQuestionsParams {
+  clerkId: string;
+  page?: number;
+  pageSize?: number;
+  filter?: string;
+  searchQuery?: string;
+}
+
+export interface QuestionCardProps {
+  _id: string;
+  title: string;
+  tags?: { _id: string; name: string }[];
+  author: {
+    _id: string;
+    name: string;
+    picture: string;
+  };
+  views: number;
+  answers?: Array<object>;
+  upvotes: number;
+  createdAt: Date;
+}

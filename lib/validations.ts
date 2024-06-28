@@ -18,3 +18,7 @@ export const questionSchema = z.object({
     )
     .max(15, 'No more then 15 tags allowed!'),
 });
+
+export const AnswerSchema = z.object({
+  content: z.string().min(5, 'Content must be at least 5 charachters long'),
+});

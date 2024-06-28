@@ -7,12 +7,12 @@ export interface IQuestion extends Document {
   views: number;
   upvotes: Schema.Types.ObjectId[];
   downvotes: Schema.Types.ObjectId[];
-  author: Schema.Types.ObjectId[];
+  author: Schema.Types.ObjectId;
   answers: Schema.Types.ObjectId[];
   createdAt: Date;
 }
 
-const QuestionSchema = new Schema({
+const QuestionSchema = new Schema<IQuestion>({
   title: {
     type: String,
     required: true,
@@ -36,6 +36,7 @@ const QuestionSchema = new Schema({
   },
 });
 
-const Question = models.Question || model('Question', QuestionSchema);
+const Question =
+  models?.Question || model<IQuestion>('Question', QuestionSchema);
 
 export default Question;
