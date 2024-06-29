@@ -10,7 +10,7 @@ const page = async () => {
   const results = await getAllTags({});
   return (
     <>
-      <h1 className='h1-bold  text-dark100_light900'>All Users</h1>
+      <h1 className='h1-bold  text-dark100_light900'>All Tags</h1>
       <div className='mt-10 flex w-full flex-col items-center gap-5 md:flex-row md:gap-2.5'>
         <LocalSearchBar
           iconPosition='left'

@@ -1,11 +1,12 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '../ui/button';
 import Image from 'next/image';
 import { formatNumber } from '@/lib/utils';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { downVote, upVote } from '@/lib/actions/factory.action';
-import { saveQuestion } from '@/lib/actions/user.action';
+import { toggleSaveQuestion } from '@/lib/actions/user.action';
+import { viewQuestion } from '@/lib/actions/interaction.action';
 
 interface Props {
   type: string;
@@ -30,13 +31,14 @@ const Votes = ({
   authorId,
 }: Props) => {
   const pathName = usePathname();
+  const router = useRouter();
 
   const handleSave = async () => {
     if (type !== 'Question' || !userId) return;
 
     if (hasSaved === undefined) return;
 
-    await saveQuestion({
+    await toggleSaveQuestion({
       questionId: JSON.parse(itemId),
       route: pathName,
       userId: JSON.parse(userId),
@@ -58,6 +60,13 @@ const Votes = ({
 
     await (action === 'upvote' ? upVote(params) : downVote(params));
   };
+
+  useEffect(() => {
+    viewQuestion({
+      questionId: JSON.parse(itemId),
+      userId: userId ? JSON.parse(userId) : undefined,
+    });
+  }, [itemId, userId, pathName, router]);
 
   return (
     <div className='-mt-2  flex items-start gap-5 '>

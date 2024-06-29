@@ -22,3 +22,18 @@ export const questionSchema = z.object({
 export const AnswerSchema = z.object({
   content: z.string().min(5, 'Content must be at least 5 charachters long'),
 });
+
+export const profileSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'Profile name must be at least 1 character long')
+    .max(20, 'Profile name must be at most 20 characters long'),
+  username: z
+    .string()
+    .max(20, 'Profile username must be at most 20 characters long'),
+  bio: z.string().max(500, 'Bio must be at most 500 characters long'),
+  location: z.string().max(50, 'Location must be at most 50 characters long'),
+  portfolioWebsite: z
+    .string()
+    .max(250, 'Portfolio website link must be at most 250 characters long'),
+});

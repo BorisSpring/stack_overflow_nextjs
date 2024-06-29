@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Metric from '../shared/Metric';
 import { formatNumber, getTimeStamp } from '@/lib/utils';
 import { QuestionCardProps } from '@/lib/actions/shared.types';
+import EditDeleteAction from '../shared/EditDeleteAction';
 
 const QuestionCard = ({
   _id,
@@ -15,6 +16,7 @@ const QuestionCard = ({
   views,
   answers,
   upvotes,
+  clerkId,
 }: QuestionCardProps) => {
   return (
     <div className='card-wrapper flex flex-col gap-5 rounded-[10px] p-9 sm:px-11'>
@@ -29,7 +31,11 @@ const QuestionCard = ({
             </h3>
           </Link>
         </div>
-        {/* {add edit delete later} */}
+        <EditDeleteAction
+          type='question'
+          itemId={_id.toString()}
+          loggedUserClerkId={clerkId}
+        />
       </div>
       {/* tags */}
       <div className='flex flex-wrap gap-3'>

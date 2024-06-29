@@ -4,16 +4,23 @@ import { sidebarLinks } from '@/constants';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { SignedIn, SignedOut } from '@clerk/nextjs';
+import { SignedIn, SignedOut, useAuth } from '@clerk/nextjs';
 import { Button } from '../ui/button';
 
 const LeftSideBar = () => {
   const pathName = usePathname();
+  const { userId: clerkId } = useAuth();
+
   return (
     <section className='background-light900_dark200  custom-scrollbar  sticky left-0 top-0 flex h-screen max-h-[1024px] flex-col justify-between overflow-y-auto  border-r px-6 pb-8  pt-28  shadow-light-200 dark:shadow-none max-sm:hidden lg:w-[266px]'>
       <div className='no-focus mx-auto flex w-full flex-col gap-2  pt-16 '>
         {sidebarLinks.map(({ imgURL, route, label }) => {
           const isActive = pathName === route;
+
+          if (route === '/profile' && clerkId) {
+            route = `/profile/${clerkId}`;
+          }
+
           return (
             <Link
               key={route}

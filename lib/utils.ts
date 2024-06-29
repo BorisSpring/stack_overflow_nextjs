@@ -58,8 +58,10 @@ export async function executeMethodWithTryAndTransactiona(
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    await executeFunction();
+    const result = await executeFunction();
     await session.commitTransaction();
+
+    return result;
   } catch (error) {
     await session.abortTransaction();
     console.error(error);

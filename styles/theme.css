@@ -195,6 +195,11 @@
     background: linear-gradient(129deg, #ff7000 0%, #e2995f 100%);
   }
 
+  .primary-gradient-border {
+    border-color: linear-gradient(129deg, #ff7000 90%, #e2995f 100%) !important;
+    border-width: 3px !important;
+  }
+
   .dark-gradient {
     background: linear-gradient(
       232deg,

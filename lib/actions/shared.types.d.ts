@@ -16,6 +16,15 @@ export interface CreateQuestionParams {
   path: string;
 }
 
+export interface UpdateQuestionParams {
+  title: string;
+  content: string;
+  tags: string[];
+  clerkId: string;
+  path: string;
+  questionId: string;
+}
+
 export interface CreateUserParams {
   email: string;
   clerkId: string;
@@ -113,4 +122,59 @@ export interface QuestionCardProps {
   answers?: Array<object>;
   upvotes: number;
   createdAt: Date;
+  clerkId?: string | null;
+}
+
+export interface ViewQuestionParams {
+  userId: string | undefined;
+  questionId: string;
+}
+
+export interface getQuestionsByTagIdParams {
+  page?: number;
+  pageSize?: number;
+  tagId: string;
+  searchQuery?: string;
+}
+
+export interface getUserInfoParams {
+  clerkId: string;
+}
+
+export interface getUserTopQuestionsParams {
+  author: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface getUserAnswerParams {
+  author: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface DeleteAnswerParams {
+  clerkId: string;
+  itemId: string;
+  route: string;
+}
+
+export interface DeleteQuestionParams {
+  clerkId: string;
+  itemId: string;
+  route: string;
+}
+
+export interface getQuestionToBeEditedParams {
+  id: string;
+  clerkId: string;
+}
+
+export interface UpdateUserDetailsParams {
+  userId: string;
+  name: string;
+  username?: string;
+  bio?: string;
+  location?: string;
+  portfolioWebsite?: string;
 }

@@ -1,16 +1,18 @@
 'use server';
 
 import User, { IUser } from '@/database/user.model';
-import { connectToDatabase } from '../mongoose';
 import {
   CreateUserParams,
   DeleteUserParams,
   GetAllUsersParams,
   GetUserByIdParams,
   SaveQuestionParams,
+  UpdateUserDetailsParams,
   findSavedQuestionsParams,
+  getUserAnswerParams,
+  getUserInfoParams,
+  getUserTopQuestionsParams,
 } from './shared.types';
-import mongoose from 'mongoose';
 
 import Question from '@/database/question.model';
 import {
@@ -19,27 +21,15 @@ import {
 } from '../utils';
 import { revalidatePath } from 'next/cache';
 import Tag from '@/database/tag.model';
+import Answer from '@/database/answer.model';
 
-// export async function getUserById(
-//   params: GetUserByIdParams
-// ): Promise<IUser | null> {
-//   try {
-//     await connectToDatabase(); // Ensure this is an async function if it returns a promise
-
-//     const { userId } = params;
-//     const user = await User.findOne({ clerkId: userId }).lean<IUser>();
-//     return user;
-//   } catch (error) {
-//     console.log(error);
-//     throw error;
-//   }
-// }
 export async function getUserById(
   params: GetUserByIdParams
 ): Promise<IUser | null> {
   return await executeMethodWithTryCatch(async () => {
     const { userId } = params;
     const user = await User.findOne({ clerkId: userId }).lean<IUser>();
+
     return user;
   });
 }
@@ -75,7 +65,7 @@ export async function getAllUsers(params: GetAllUsersParams) {
   });
 }
 
-export async function saveQuestion(params: SaveQuestionParams) {
+export async function toggleSaveQuestion(params: SaveQuestionParams) {
   await executeMethodWithTryAndTransactiona(async () => {
     const { questionId, route, userId, isSaved } = params;
 
@@ -121,5 +111,72 @@ export async function findSavedQuestions(params: findSavedQuestionsParams) {
     if (!user) throw new Error('User not found!');
 
     return user;
+  });
+}
+
+export async function getUserInfo(params: getUserInfoParams) {
+  return await executeMethodWithTryCatch(async () => {
+    const { clerkId } = params;
+
+    const user = await User.findOne({ clerkId });
+
+    if (!user) throw new Error('User not found!');
+
+    const totalQuestions = await Question.countDocuments({ author: user._id });
+    const totalAnswers = await Answer.countDocuments({ author: user._id });
+
+    return { user, totalQuestions, totalAnswers };
+  });
+}
+
+export async function getUserTopQuestions(params: getUserTopQuestionsParams) {
+  return await executeMethodWithTryCatch(async () => {
+    const { author, page = 1, pageSize = 10 } = params;
+
+    const questions = await Question.find({ author })
+      .skip((page - 1) * pageSize)
+      .select(
+        'title content  tags  views upvotes  downvotes  author  createdAt'
+      )
+      .sort({ views: -1, upvotes: -1 })
+      .populate([
+        { path: 'author', model: User, select: 'name picture clerkId' },
+        { path: 'tags', model: Tag, select: 'name' },
+        { path: 'author', model: User, select: 'clerkId picture name' },
+      ]);
+
+    return questions;
+  });
+}
+
+export async function getUserAnswers(params: getUserAnswerParams) {
+  return await executeMethodWithTryCatch(async () => {
+    const { author, page = 1, pageSize = 10 } = params;
+
+    const answers = await Answer.find({ author })
+      .skip((page - 1) * pageSize)
+      .sort({ upvotes: -1 })
+      .populate([
+        { path: 'question', select: 'title createdAt' },
+        { path: 'author', select: 'clerkId picture name' },
+      ]);
+
+    return answers;
+  });
+}
+
+export async function updateUserDetails(params: UpdateUserDetailsParams) {
+  await executeMethodWithTryAndTransactiona(async () => {
+    const { userId, ...updateParams } = params;
+
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      updateParams,
+      { new: true }
+    );
+
+    if (!updatedUser) throw new Error('Fail to update user!');
+
+    revalidatePath(`/profile/${updatedUser.clerkId}`);
   });
 }

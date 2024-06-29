@@ -19,17 +19,29 @@ import { Input } from '@/components/ui/input';
 import { questionSchema } from '@/lib/validations';
 import { Badge } from '../ui/badge';
 import Image from 'next/image';
-import { createQuestion } from '@/lib/actions/question.action';
+import { createQuestion, updateQuestion } from '@/lib/actions/question.action';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTheme } from '@/context/themeProvider';
 
 const type: any = 'create';
 
 interface Props {
-  mongoUserId: string;
+  mongoUserId?: string;
+  questionId?: string;
+  title?: string;
+  tags: string[];
+  content?: string;
+  clerkId?: string;
 }
 
-export function Question({ mongoUserId }: Props) {
+export function Question({
+  mongoUserId,
+  questionId,
+  title,
+  tags,
+  content,
+  clerkId,
+}: Props) {
   const editorRef = useRef(null);
   const router = useRouter();
   const pathName = usePathname();
@@ -38,23 +50,32 @@ export function Question({ mongoUserId }: Props) {
   const form = useForm<z.infer<typeof questionSchema>>({
     resolver: zodResolver(questionSchema),
     defaultValues: {
-      title: '',
-      explanation: '',
-      tags: [],
+      title: title ?? '',
+      explanation: content ?? '',
+      tags: tags ?? [],
     },
   });
 
   async function onSubmit(values: z.infer<typeof questionSchema>) {
     try {
-      await createQuestion({
+      const params = {
         title: values.title,
         content: values.explanation,
         tags: values.tags,
-        author: JSON.parse(mongoUserId),
         path: pathName,
-      });
+      };
+      pathName.startsWith('/question/edit')
+        ? await updateQuestion({
+            ...params,
+            clerkId: clerkId!,
+            questionId: questionId!,
+          })
+        : await createQuestion({
+            ...params,
+            author: JSON.parse(mongoUserId!),
+          });
 
-      router.push('/');
+      router.push(questionId ? `/question/${questionId}` : '/w');
     } catch (error) {
       console.error(error);
     }
@@ -140,7 +161,10 @@ export function Question({ mongoUserId }: Props) {
                   }}
                   onBlur={field.onBlur}
                   onEditorChange={(content) => field.onChange(content)}
-                  initialValue='<p>This is the initial content of the editor.</p>'
+                  initialValue={
+                    content ||
+                    '<p>This is the initial content of the editor.</p>'
+                  }
                   init={{
                     height: 350,
                     menubar: false,
