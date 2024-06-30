@@ -6,12 +6,16 @@ import { Button } from '@/components/ui/button';
 import { HomePageFilters } from '@/constants/filters';
 import { getQuestions } from '@/lib/actions/question.action';
 import { QuestionCardProps } from '@/lib/actions/shared.types';
+import { SearchParamsProps } from '@/types';
 
 import Link from 'next/link';
 import React from 'react';
 
-const Home = async () => {
-  const results = await getQuestions({});
+const Home = async ({ searchParams }: SearchParamsProps) => {
+  const results = await getQuestions({
+    searchQuery: searchParams.query,
+    filter: searchParams.filter,
+  });
 
   return (
     <>

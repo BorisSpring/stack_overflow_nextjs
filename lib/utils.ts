@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { connectToDatabase } from './mongoose';
 import mongoose from 'mongoose';
+import qs from 'query-string';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -79,3 +80,39 @@ export async function executeMethodWithTryCatch(executeFunction: any) {
     console.error(error);
   }
 }
+
+interface UrlQueryParams {
+  params: string;
+  key: string;
+  value: string | null;
+}
+
+export const formUrlQuery = ({ params, key, value }: UrlQueryParams) => {
+  const queryUrl = qs.parse(params);
+
+  queryUrl[key] = value;
+
+  return qs.stringifyUrl(
+    { url: window.location.pathname, query: queryUrl },
+    { skipNull: true }
+  );
+};
+
+interface RemoveUrlQueryParams {
+  params: string;
+  keysToRemove: string[];
+}
+
+export const removeQueryFromUrl = ({
+  params,
+  keysToRemove,
+}: RemoveUrlQueryParams) => {
+  const queryObject = qs.parse(params);
+
+  keysToRemove.forEach((key) => delete queryObject[key]);
+
+  return qs.stringifyUrl(
+    { url: window.location.pathname, query: queryObject },
+    { skipNull: true }
+  );
+};

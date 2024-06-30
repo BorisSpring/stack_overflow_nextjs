@@ -26,12 +26,47 @@ import {
 
 import Answer from '@/database/answer.model';
 import Interaction from '@/database/interaction.model';
+import { FilterQuery } from 'mongoose';
 
 export async function getQuestions(params: GetQuestionsParams) {
   return await executeMethodWithTryCatch(async () => {
-    const questions = await Question.find({})
-      .populate({ path: 'tags', model: Tag })
-      .populate({ path: 'author', model: User });
+    const { searchQuery, page = 1, pageSize = 10, filter } = params;
+
+    const query: FilterQuery<typeof Question> = searchQuery
+      ? {
+          $or: [
+            { title: { $regex: new RegExp(searchQuery, 'i') } },
+            { content: { $regex: new RegExp(searchQuery, 'i') } },
+          ],
+        }
+      : {};
+
+    let sortOptions = {};
+
+    switch (filter) {
+      case 'newest':
+        sortOptions = { createdAt: -1 };
+        break;
+      case 'frequent':
+        sortOptions = { views: -1 };
+        break;
+      case 'unanswered':
+        query.answers = { $size: 0 };
+        break;
+      case 'recommended':
+        break;
+      default:
+        break;
+    }
+
+    const questions = await Question.find(query)
+      .sort(sortOptions)
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .populate([
+        { path: 'tags', model: Tag },
+        { path: 'author', model: User },
+      ]);
 
     return { questions };
   });
@@ -204,8 +239,8 @@ export async function updateQuestion(params: UpdateQuestionParams) {
 export async function hotQuestions() {
   return await executeMethodWithTryCatch(async () => {
     return await Question.find()
-      .sort({ views: -1, upvotes: -1 })
       .limit(5)
+      .sort({ views: -1, upvotes: -1 })
       .select('title');
   });
 }

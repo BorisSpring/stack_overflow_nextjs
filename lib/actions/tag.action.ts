@@ -11,6 +11,8 @@ import Tag, { ITag } from '@/database/tag.model';
 import { executeMethodWithTryCatch } from '../utils';
 import { FilterQuery } from 'mongoose';
 import Question from '@/database/question.model';
+import { Regex } from 'lucide-react';
+import page from '@/app/(root)/(home)/page';
 
 export async function getTopInteractiveTags(
   params: GetTopInteractiveTagsParams
@@ -35,32 +37,38 @@ export async function getTopInteractiveTags(
 }
 
 export async function getAllTags(params: GetAllTagsParams) {
-  try {
-    const { page = 1, pageSize = 20, filter } = params;
+  return await executeMethodWithTryCatch(async () => {
+    const { page = 1, pageSize = 10, searchQuery, filter } = params;
 
-    const tags = await Tag.find().skip((page - 1) * pageSize);
+    const query: FilterQuery<typeof Tag> = searchQuery
+      ? { name: { $regex: new RegExp(searchQuery, 'i') } }
+      : {};
 
-    return { tags };
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+    return await Tag.find(query)
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
+  });
 }
 
 export async function getTagQuestions(params: getQuestionsByTagIdParams) {
   return await executeMethodWithTryCatch(async () => {
     const { page = 1, pageSize = 10, tagId, searchQuery } = params;
 
-    const tagFilter: FilterQuery<ITag> = { _id: tagId };
+    const questionFilter: FilterQuery<typeof Question> = searchQuery
+      ? {
+          $or: [
+            { title: { $regex: new RegExp(searchQuery, 'i') } },
+            { content: { $regex: new RegExp(searchQuery, 'i') } },
+          ],
+        }
+      : {};
 
-    const tag = await Tag.findOne(tagFilter)
+    const tag = await Tag.findOne({ _id: tagId })
       .select('name questions')
       .populate({
         path: 'questions',
         model: Question,
-        match: searchQuery
-          ? { title: { $regEx: searchQuery, options: 'i' } }
-          : {},
+        match: questionFilter,
         options: { sort: { createdAt: -1 } },
         select:
           'title content  tags  views upvotes  downvotes  author  createdAt',
@@ -69,10 +77,29 @@ export async function getTagQuestions(params: getQuestionsByTagIdParams) {
           { path: 'author', model: User, select: 'clerkId picture name' },
         ],
       })
-      .skip((page - 1) * pageSize);
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
 
     if (!tag) throw new Error('Tag not found!');
-
     return tag;
+  });
+}
+
+export async function getHotTags() {
+  return await executeMethodWithTryCatch(async () => {
+    return await Tag.aggregate([
+      {
+        $project: {
+          name: 1,
+          numberOfQuestions: { $size: '$questions' },
+        },
+      },
+      {
+        $sort: { numberOfQuestions: -1 },
+      },
+      {
+        $limit: 5,
+      },
+    ]);
   });
 }

@@ -4,10 +4,11 @@ import NoResult from '@/components/shared/NoResult';
 import LocalSearchBar from '@/components/shared/search/LocalSearchBar';
 import { TagFilters } from '@/constants/filters';
 import { getAllTags } from '@/lib/actions/tag.action';
+import { SearchParamsProps } from '@/types';
 import React from 'react';
 
-const page = async () => {
-  const results = await getAllTags({});
+const page = async ({ searchParams }: SearchParamsProps) => {
+  const tags = await getAllTags({ searchQuery: searchParams.query });
   return (
     <>
       <h1 className='h1-bold  text-dark100_light900'>All Tags</h1>
@@ -26,8 +27,8 @@ const page = async () => {
         />
       </div>
       <section className=' mt-10 flex flex-wrap gap-4'>
-        {results?.tags?.length > 0 ? (
-          results.tags.map((tag) => <TagCard tag={tag} key={tag._id} />)
+        {tags?.length > 0 ? (
+          tags.map((tag: any) => <TagCard tag={tag} key={tag._id} />)
         ) : (
           <NoResult
             title='No tags Found'

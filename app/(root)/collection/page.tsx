@@ -7,12 +7,16 @@ import LocalSearchBar from '@/components/shared/search/LocalSearchBar';
 import { QuestionFilters } from '@/constants/filters';
 import Filter from '@/components/shared/Filter';
 import { QuestionCardProps } from '@/lib/actions/shared.types';
+import { SearchParamsProps } from '@/types';
 
-const page = async () => {
-  const { userId: clerkId } = auth();
+const page = async ({ searchParams }: SearchParamsProps) => {
+  const { userId } = auth();
+
+  if (!userId) return null;
 
   const userCollection = await findSavedQuestions({
-    clerkId: clerkId!,
+    clerkId: userId,
+    searchQuery: searchParams.query,
   });
 
   return (
@@ -55,7 +59,7 @@ const page = async () => {
             title='There’s no saved questions to show'
             description='Saved frist question to collection by click star icon on top rigth side of the question!'
             link='/'
-            linkTitle='Visit Home Page Questions'
+            linkTitle='Visit Home'
           />
         )}
       </div>

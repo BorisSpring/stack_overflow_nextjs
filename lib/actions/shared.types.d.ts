@@ -64,6 +64,7 @@ export interface GetAllTagsParams {
   page?: number;
   pageSize?: number;
   filter?: string;
+  searchQuery?: string;
 }
 
 export interface GetQuestionByIdParams {
@@ -117,6 +118,7 @@ export interface QuestionCardProps {
     _id: string;
     name: string;
     picture: string;
+    clerkId?: string;
   };
   views: number;
   answers?: Array<object>;

@@ -3,11 +3,12 @@ import Filter from '@/components/shared/Filter';
 import LocalSearchBar from '@/components/shared/search/LocalSearchBar';
 import { UserFilters } from '@/constants/filters';
 import { getAllUsers } from '@/lib/actions/user.action';
+import { SearchParamsProps } from '@/types';
 import Link from 'next/link';
 import React from 'react';
 
-const page = async () => {
-  const result = await getAllUsers({});
+const page = async ({ searchParams }: SearchParamsProps) => {
+  const result = await getAllUsers({ searchQuery: searchParams.query });
 
   return (
     <>
@@ -28,7 +29,9 @@ const page = async () => {
       </div>
       <section className='mt-10 flex flex-wrap justify-between gap-4'>
         {result !== undefined && result.users.length > 0 ? (
-          result.users.map((user) => <UserCard key={user._id} user={user} />)
+          result.users.map((user: any) => (
+            <UserCard key={user._id} user={user} />
+          ))
         ) : (
           <div className='paragraph-regular text-dark200_light800 mx-auto  max-w-4xl text-center'>
             <p> No users yet</p>

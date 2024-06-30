@@ -22,6 +22,7 @@ import {
 import { revalidatePath } from 'next/cache';
 import Tag from '@/database/tag.model';
 import Answer from '@/database/answer.model';
+import { FilterQuery } from 'mongoose';
 
 export async function getUserById(
   params: GetUserByIdParams
@@ -59,7 +60,22 @@ export async function deleteUser(params: DeleteUserParams) {
 
 export async function getAllUsers(params: GetAllUsersParams) {
   return await executeMethodWithTryCatch(async () => {
-    const users = await User.find({}).sort({ joinedAt: -1 });
+    const { page = 1, pageSize = 10, filter, searchQuery } = params;
+
+    const query: FilterQuery<typeof User> = {};
+
+    if (searchQuery) {
+      query.$or = [
+        { username: { $regex: new RegExp(searchQuery, 'i') } },
+        { name: { $regex: new RegExp(searchQuery, 'i') } },
+        { email: { $regex: new RegExp(searchQuery, 'i') } },
+      ];
+    }
+
+    const users = await User.find(query)
+      .sort({ joinedAt: -1 })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
 
     return { users };
   });
@@ -91,11 +107,20 @@ export async function findSavedQuestions(params: findSavedQuestionsParams) {
   return await executeMethodWithTryCatch(async () => {
     const { clerkId, page = 1, pageSize = 10, filter, searchQuery } = params;
 
+    const query: FilterQuery<typeof Question> = searchQuery
+      ? {
+          $or: [
+            { title: { $regex: new RegExp(searchQuery, 'i') } },
+            { content: { $regex: new RegExp(searchQuery, 'i') } },
+          ],
+        }
+      : {};
+
     const user = await User.findOne({ clerkId })
       .select('saved')
       .populate({
         path: 'saved',
-        match: {},
+        match: query,
         options: {
           sort: { createdAt: -1 },
         },

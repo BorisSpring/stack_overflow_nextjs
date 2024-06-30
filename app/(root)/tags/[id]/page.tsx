@@ -10,20 +10,21 @@ const Page = async ({ params, searchParams }: URLProps) => {
   const tag = await getTagQuestions({
     tagId: params.id,
     page: 1,
-    searchQuery: searchParams.q,
+    searchQuery: searchParams.query,
   });
 
+  console.log(tag.questions);
   return (
     <div className='flex flex-col gap-5'>
       <h2 className='h2-semibold text-dark-300 dark:text-light-900'>
-        {tag.name}
+        {tag?.name}
       </h2>
       <LocalSearchBar
         iconPosition='left'
         route={`/tags/${params.id}`}
         otherClasses='flex-1'
         imgSrc='/assets/icons/search.svg'
-        placeholder='Search for tag here...'
+        placeholder='Search for question title or content here'
       />
       {tag !== undefined && tag.questions?.length > 0 ? (
         tag.questions.map((question: QuestionCardProps) => (
