@@ -75,7 +75,7 @@ export function Question({
             author: JSON.parse(mongoUserId!),
           });
 
-      router.push(questionId ? `/question/${questionId}` : '/w');
+      router.push(questionId ? `/question/${questionId}` : '/');
     } catch (error) {
       console.error(error);
     }

@@ -33,7 +33,5 @@ export const profileSchema = z.object({
     .max(20, 'Profile username must be at most 20 characters long'),
   bio: z.string().max(500, 'Bio must be at most 500 characters long'),
   location: z.string().max(50, 'Location must be at most 50 characters long'),
-  portfolioWebsite: z
-    .string()
-    .max(250, 'Portfolio website link must be at most 250 characters long'),
+  portfolioWebsite: z.string().url(),
 });

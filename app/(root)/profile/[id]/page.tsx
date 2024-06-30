@@ -18,7 +18,6 @@ const page = async ({ params, searchParams }: URLProps) => {
 
   if (!userInfo) return;
   const { userId: clerkId } = auth();
-
   const { totalQuestions, totalAnswers, user } = userInfo;
   return (
     <>
@@ -30,7 +29,7 @@ const page = async ({ params, searchParams }: URLProps) => {
           alt={user.picture!}
           className='primary-gradient-border rounded-full object-cover'
         />
-        <div className='mt-3'>
+        <div className='mt-3 w-full'>
           <h2 className='h2-bold text-dark200_light900 whitespace-nowrap'>
             {user.name}
           </h2>
@@ -58,9 +57,9 @@ const page = async ({ params, searchParams }: URLProps) => {
               title={`Joined ${format(user.joinedAt, 'MMM yyyy')}`}
             />
           </div>
-          {userInfo?.bio && (
+          {user?.bio && (
             <p className='paragraph-regular text-dark400_light800 mt-8'>
-              {userInfo.bio}
+              {user.bio}
             </p>
           )}
         </div>
