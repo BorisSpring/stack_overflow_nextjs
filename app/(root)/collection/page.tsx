@@ -17,6 +17,7 @@ const page = async ({ searchParams }: SearchParamsProps) => {
   const userCollection = await findSavedQuestions({
     clerkId: userId,
     searchQuery: searchParams.query,
+    filter: searchParams.filter,
   });
 
   return (
@@ -25,7 +26,7 @@ const page = async ({ searchParams }: SearchParamsProps) => {
         All Questions
       </h2>
 
-      <div className='mt-11 flex flex-col justify-between  gap-5 '>
+      <div className='mt-11 flex flex-col justify-between gap-5  lg:flex-row '>
         <LocalSearchBar
           iconPosition='left'
           route='/'
@@ -36,7 +37,7 @@ const page = async ({ searchParams }: SearchParamsProps) => {
         <Filter
           filters={QuestionFilters}
           otherClasses='md:min-h-[56px] min-w-[170px]'
-          containerClasses='hidden max-md:flex'
+          containerClasses=' max-md:flex'
         />
       </div>
       <div className='mt-6 flex w-full flex-col gap-6'>

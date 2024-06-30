@@ -7,13 +7,17 @@ import Votes from '@/components/shared/Votes';
 import { getQuestionById } from '@/lib/actions/question.action';
 import { getUserById } from '@/lib/actions/user.action';
 import { formatNumber, getTimeStamp } from '@/lib/utils';
+import { URLProps } from '@/types';
 import { auth } from '@clerk/nextjs/server';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
-const page = async ({ params, searchParams }: any) => {
-  const question = await getQuestionById(params.questionId);
+const page = async ({ params, searchParams }: URLProps) => {
+  const question = await getQuestionById({
+    questionId: params.id,
+    filter: searchParams.filter,
+  });
   const { userId: clerkId } = auth();
 
   let mongoUser;
@@ -44,14 +48,14 @@ const page = async ({ params, searchParams }: any) => {
         <Votes
           userId={JSON.stringify(mongoUser?._id)}
           type='Question'
-          itemId={JSON.stringify(params.questionId)}
+          itemId={JSON.stringify(params.id)}
           upvotes={question?.upvotes?.length || 0}
           downvotes={question?.downvotes?.length || 0}
           hasUpVoted={question?.upvotes?.includes(mongoUser?._id)}
           hasDownVoted={question?.downvotes?.includes(mongoUser?._id)}
           hasSaved={mongoUser?.saved
             .map((id) => id.toString())
-            .includes(params.questionId)}
+            .includes(params.id)}
           authorId={JSON.stringify(question?.author._id)}
         />
       </div>
@@ -95,14 +99,14 @@ const page = async ({ params, searchParams }: any) => {
 
       <AllAnswers
         answers={question?.answers}
-        questionId={params.questionId}
+        questionId={params.id}
         userId={JSON.stringify(mongoUser?._id)}
       />
 
       {/* answer form */}
       <Answer
         question={question?.content}
-        questionId={params.questionId}
+        questionId={params.id}
         authorId={JSON.stringify(mongoUser?._id)}
       />
     </main>

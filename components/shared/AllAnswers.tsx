@@ -1,4 +1,4 @@
-import { QuestionFilters } from '@/constants/filters';
+import { AnswerFilters } from '@/constants/filters';
 import React from 'react';
 import Filter from '@/components/shared/Filter';
 import { format } from 'date-fns';
@@ -36,7 +36,7 @@ const AllAnswers = ({ questionId, filter, page, answers, userId }: Props) => {
         <p className='primary-text-gradient text-[16px] font-medium'>
           {answers.length} Answers
         </p>
-        <Filter containerClasses='min-w-[173px]' filters={QuestionFilters} />
+        <Filter containerClasses='min-w-[173px]' filters={AnswerFilters} />
       </div>
       <div className='flex flex-col gap-4'>
         {answers.map((answer) => (

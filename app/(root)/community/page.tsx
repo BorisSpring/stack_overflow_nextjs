@@ -8,7 +8,10 @@ import Link from 'next/link';
 import React from 'react';
 
 const page = async ({ searchParams }: SearchParamsProps) => {
-  const result = await getAllUsers({ searchQuery: searchParams.query });
+  const result = await getAllUsers({
+    searchQuery: searchParams.query,
+    filter: searchParams.filter,
+  });
 
   return (
     <>
@@ -27,7 +30,7 @@ const page = async ({ searchParams }: SearchParamsProps) => {
           otherClasses='md:h-[56px] body-semibold'
         />
       </div>
-      <section className='mt-10 flex flex-wrap justify-between gap-4'>
+      <section className='mt-10 flex flex-wrap justify-start gap-4'>
         {result !== undefined && result.users.length > 0 ? (
           result.users.map((user: any) => (
             <UserCard key={user._id} user={user} />
@@ -40,21 +43,6 @@ const page = async ({ searchParams }: SearchParamsProps) => {
             </Link>
           </div>
         )}
-        {/* NoResult = ({ title, description, link, linkTitle }: Props) => { */}
-        {/* {Array.from({ length: 20 }).map((_, i) => (
-          <UserCard
-            tags={[
-              { name: 'a', _id: '1' },
-              { name: 'b', _id: '3' },
-              { name: 'c', _id: '2' },
-            ]}
-            key={i}
-            _id={'1'}
-            picture='https://img.clerk.com/eyJ0eXBlIjoicHJveHkiLCJzcmMiOiJodHRwczovL2ltYWdlcy5jbGVyay5kZXYvb2F1dGhfZ29vZ2xlL2ltZ18yaVF4a25DNkFIekFRdVR4UExPMnpHaWFKTjkifQ'
-            name='boris dimitriejvic'
-            username='username bla '
-          />
-        ))} */}
       </section>
     </>
   );

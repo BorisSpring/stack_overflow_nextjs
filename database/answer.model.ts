@@ -28,7 +28,7 @@ const answerSchema = new Schema<IAnswer>({
   downvotes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
 });
 

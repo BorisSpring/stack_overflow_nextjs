@@ -7,15 +7,6 @@ import { executeMethodWithTryAndTransactiona } from '../utils';
 import User from '@/database/user.model';
 import Interaction from '@/database/interaction.model';
 
-export async function tryCatchUtil(executeFunction: any) {
-  try {
-    await executeFunction();
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
-
 export async function createAnswer(params: CreateAnswerParams) {
   await executeMethodWithTryAndTransactiona(async () => {
     const { author, content, route, questionId } = params;
@@ -24,6 +15,7 @@ export async function createAnswer(params: CreateAnswerParams) {
       author,
       content,
       question: questionId,
+      createdAt: new Date(),
     });
 
     await Question.findByIdAndUpdate(questionId, {

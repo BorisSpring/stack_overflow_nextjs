@@ -112,7 +112,28 @@ export async function updateUser(params: UpdateUserParams) {
 
 export async function getQuestionById(params: GetQuestionByIdParams) {
   return await executeMethodWithTryCatch(async () => {
-    const question = await Question.findById(params).populate([
+    const { questionId, filter } = params;
+
+    let sortAnswerOptions = {};
+
+    switch (filter) {
+      case 'highestUpvotes':
+        sortAnswerOptions = { upvotes: -1 };
+        break;
+      case 'lowestUpvotes':
+        sortAnswerOptions = { upvotes: 1 };
+        break;
+      case 'recent':
+        sortAnswerOptions = { createdAt: -1 };
+        break;
+      case 'old':
+        sortAnswerOptions = { createdAt: 1 };
+        break;
+      default:
+        break;
+    }
+
+    const question = await Question.findById(questionId).populate([
       {
         path: 'author',
         model: User,
@@ -121,15 +142,19 @@ export async function getQuestionById(params: GetQuestionByIdParams) {
       { path: 'tags', model: Tag, select: 'name _id' },
       {
         path: 'answers',
+        options: {
+          sort: sortAnswerOptions,
+        },
         model: Answer,
         populate: {
           path: 'author',
           model: User,
           select: 'picture clerkId name',
         },
-        options: { sort: { createdAt: -1 } },
       },
     ]);
+
+    if (!question) throw new Error('Question not found!');
 
     return question;
   });

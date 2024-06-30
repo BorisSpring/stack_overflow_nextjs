@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Select,
   SelectContent,
@@ -9,6 +9,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import HomeFilters from '../home/HomeFilters';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { formUrlQuery } from '@/lib/utils';
 
 interface Props {
   filters: {
@@ -20,10 +22,27 @@ interface Props {
 }
 
 const Filter = ({ filters, otherClasses, containerClasses }: Props) => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const filter = searchParams.get('filter');
+  const [activeFilter, setActiveFilter] = useState(filter || '');
+
+  const handleChangeFilter = (value: string) => {
+    setActiveFilter(() => value);
+    const url = formUrlQuery({
+      params: searchParams.toString(),
+      key: 'filter',
+      value,
+    });
+    router.push(url, { scroll: false });
+  };
   return (
     <>
       <div className={`relative ${containerClasses}`}>
-        <Select>
+        <Select
+          defaultValue={filter || undefined}
+          onValueChange={(value) => handleChangeFilter(value)}
+        >
           <SelectTrigger
             className={`${otherClasses} body-regular text-dark500_light700  background-light800_dark300 rounded-[10px] border border-light-700 dark:border-dark-400 `}
           >
@@ -36,7 +55,7 @@ const Filter = ({ filters, otherClasses, containerClasses }: Props) => {
               <SelectGroup
                 key={value}
                 className={`hover:background-light800_dark300 body-semibold z-[9999] transition-all duration-200   ${
-                  value === 'old_users'
+                  value === activeFilter
                     ? 'background-light800_dark300 text-primary-500 dark:bg-dark-400'
                     : 'text-dark500_light500 '
                 } `}

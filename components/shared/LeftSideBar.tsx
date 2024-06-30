@@ -13,7 +13,7 @@ const LeftSideBar = () => {
 
   return (
     <section className='background-light900_dark200  custom-scrollbar  sticky left-0 top-0 flex h-screen max-h-[1024px] flex-col justify-between overflow-y-auto border-r  px-6 pb-8 pt-28  shadow-light-200  dark:border-dark-400 dark:shadow-none max-sm:hidden lg:w-[266px]'>
-      <div className='no-focus mx-auto flex w-full flex-col gap-2  pt-16 '>
+      <div className='no-focus mx-auto flex w-full flex-col gap-3  pt-16 '>
         {sidebarLinks.map(({ imgURL, route, label }) => {
           const isActive = pathName === route;
 
@@ -25,7 +25,7 @@ const LeftSideBar = () => {
             <Link
               key={route}
               href={route}
-              className={` flex w-full items-center justify-start gap-4 whitespace-nowrap  bg-transparent p-4 ${
+              className={`hover:primary-gradient group flex w-full items-center justify-start gap-4 whitespace-nowrap rounded-[9px] bg-transparent p-3 transition-all  duration-200 hover:text-light-700 ${
                 isActive
                   ? 'primary-gradient rounded-[10px] text-light-900'
                   : 'text-dark300_light900'
@@ -36,11 +36,13 @@ const LeftSideBar = () => {
                 alt='icon'
                 width={21.5}
                 height={21.5}
-                className={isActive ? ' ' : 'invert-colors'}
+                className={
+                  isActive ? ' ' : 'invert group-hover:invert-0 dark:invert-0 '
+                }
               />
               <p
-                className={`max-md:hidden ${
-                  isActive ? 'base-bold' : 'base-medium'
+                className={` group-hover:font-medium group-hover:text-light-900 dark:text-light-800 max-md:hidden ${
+                  isActive ? 'base-bold' : 'base-semibold text-dark-500 '
                 }`}
               >
                 {label}
@@ -88,15 +90,15 @@ const LeftSideBar = () => {
           </Link>
         </SignedOut>
         <SignedIn>
-          <Button>
+          <Button className='flex justify-start gap-3 rounded-[8px]  '>
             <Image
               src='/assets/icons/arrow-left.svg'
               alt='logout icon'
               width={24}
-              className='invert-colors flex items-center justify-between gap-5'
+              className='invert-colors flex items-center justify-between'
               height={24}
             />
-            <p className=' text-dark300_light700 base-medium max-lg:hidden'>
+            <p className='text-dark300_light700 base-medium max-lg:hidden'>
               Log Out
             </p>
           </Button>

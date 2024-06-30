@@ -69,6 +69,7 @@ export interface GetAllTagsParams {
 
 export interface GetQuestionByIdParams {
   questionId: string;
+  filter?: string;
 }
 
 export interface CreateAnswerParams {

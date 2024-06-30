@@ -12,7 +12,7 @@ interface Props {
 const RedenerTag = ({ _id, totalQuestions, name, showCount }: Props) => {
   return (
     <Link href={`/tags/${_id}`} className='flex items-center justify-between'>
-      <Badge className=' background-light800_dark300 text-dark500_light700 subtle-medium w-fit rounded-[8px] border-none px-4 py-2 uppercase text-light-400 dark:text-light-500 '>
+      <Badge className=' background-light800_dark300 text-dark500_light700 subtle-medium w-fit rounded-[8px] border-none px-4 py-2 uppercase text-dark-300 dark:text-light-700 '>
         {name}
       </Badge>
 

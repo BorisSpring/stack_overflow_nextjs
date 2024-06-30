@@ -7,12 +7,10 @@ import {
   GetTopInteractiveTagsParams,
   getQuestionsByTagIdParams,
 } from './shared.types';
-import Tag, { ITag } from '@/database/tag.model';
+import Tag from '@/database/tag.model';
 import { executeMethodWithTryCatch } from '../utils';
 import { FilterQuery } from 'mongoose';
 import Question from '@/database/question.model';
-import { Regex } from 'lucide-react';
-import page from '@/app/(root)/(home)/page';
 
 export async function getTopInteractiveTags(
   params: GetTopInteractiveTagsParams
@@ -44,7 +42,27 @@ export async function getAllTags(params: GetAllTagsParams) {
       ? { name: { $regex: new RegExp(searchQuery, 'i') } }
       : {};
 
+    let sortOptions = {};
+
+    switch (filter) {
+      case 'popular':
+        sortOptions = { questions: -1 };
+        break;
+      case 'recent':
+        sortOptions = { createdOn: -1 };
+        break;
+      case 'name':
+        sortOptions = { name: -1 };
+        break;
+      case 'old':
+        sortOptions = { createdOn: 1 };
+        break;
+      default:
+        break;
+    }
+
     return await Tag.find(query)
+      .sort(sortOptions)
       .skip((page - 1) * pageSize)
       .limit(pageSize);
   });
