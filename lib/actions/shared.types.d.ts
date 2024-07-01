@@ -181,3 +181,8 @@ export interface UpdateUserDetailsParams {
   location?: string;
   portfolioWebsite?: string;
 }
+
+export interface GlobSearchParams {
+  type?: string | null;
+  searchQuery?: string;
+}
