@@ -88,12 +88,16 @@ export async function getAllUsers(params: GetAllUsersParams) {
         break;
     }
 
-    const users = await User.find(query)
-      .sort(sortOptions)
-      .skip((page - 1) * pageSize)
-      .limit(pageSize);
+    const [totalDocuments, users] = await Promise.all([
+      User.countDocuments(query),
+      User.find(query)
+        .sort(sortOptions)
+        .skip((page - 1) * pageSize)
+        .limit(pageSize),
+    ]);
 
-    return { users };
+    const totalPages = Math.ceil(totalDocuments / pageSize);
+    return { users, totalPages };
   });
 }
 
@@ -131,23 +135,24 @@ export async function findSavedQuestions(params: findSavedQuestionsParams) {
           ],
         }
       : {};
-    let sortOptions = {};
+
+    let sort = {};
 
     switch (filter) {
       case 'most-recent':
-        sortOptions = { createdAt: -1 };
+        sort = { createdAt: -1 };
         break;
       case 'oldest':
-        sortOptions = { createdAt: 1 };
+        sort = { createdAt: 1 };
         break;
       case 'most_voted':
-        sortOptions = { upvotes: -1 };
+        sort = { upvotes: -1 };
         break;
       case 'most_viewed':
-        sortOptions = { views: -1 };
+        sort = { views: -1 };
         break;
       case 'most_answered':
-        sortOptions = { answers: -1 };
+        sort = { answers: -1 };
         break;
       default:
         break;
@@ -158,21 +163,24 @@ export async function findSavedQuestions(params: findSavedQuestionsParams) {
       .populate({
         path: 'saved',
         match: query,
-        options: {
-          sort: sortOptions,
-        },
         select:
           'title content  tags  views upvotes  downvotes answers  author  createdAt',
+        options: {
+          skip: (page - 1) * pageSize,
+          limit: pageSize,
+          sort,
+        },
         populate: [
           { path: 'tags', model: Tag, select: 'name' },
           { path: 'author', model: User, select: 'clerkId picture name' },
         ],
-      })
-      .skip((page - 1) * pageSize);
+      });
 
     if (!user) throw new Error('User not found!');
+    const totalDocuments = await Question.countDocuments({ query });
+    const totalPages = Math.ceil(totalDocuments / pageSize);
 
-    return user;
+    return { user, totalPages };
   });
 }
 

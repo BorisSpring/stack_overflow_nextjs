@@ -15,7 +15,7 @@ interface Props {
 const TagCard = ({ tag }: Props) => {
   return (
     <Link href={`/tags/${tag._id}`} className='shadow-light100_darknone'>
-      <article className='background-light900_dark200 light-border flex w-full flex-col gap-4 rounded-xl px-[30px]  py-[40px] sm:w-[260px] '>
+      <article className='background-light900_dark200 light-border flex w-full flex-col gap-4 rounded-xl px-[30px]  py-[40px] sm:w-[242px] '>
         <Badge className=' background-light800_dark300 text-dark500_light700 subtle-medium w-fit rounded-[8px] border-none px-4 py-2 uppercase text-light-400 dark:text-light-500 '>
           {tag.name}
         </Badge>

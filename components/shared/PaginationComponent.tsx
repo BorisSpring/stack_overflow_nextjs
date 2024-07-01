@@ -3,7 +3,6 @@ import React from 'react';
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationNext,
   PaginationPrevious,
@@ -31,7 +30,10 @@ const generatePagination = (
   );
 };
 
-const PaginationComponent = ({ currentPage, totalPages }: PaginationProps) => {
+const PaginationComponent = ({
+  currentPage = 1,
+  totalPages,
+}: PaginationProps) => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -61,29 +63,48 @@ const PaginationComponent = ({ currentPage, totalPages }: PaginationProps) => {
     router.push(newUrl, { scroll: false });
   };
 
-  const pages = generatePagination(4, 20);
+  const pages = generatePagination(currentPage, totalPages);
+
+  if (totalPages <= 1) return undefined;
   return (
-    <div className='mt-8 flex w-full items-center justify-center gap-2'>
+    <div className='mt-8 flex w-full items-center justify-center '>
       <Pagination>
         <PaginationContent>
           <PaginationItem>
-            <Button onClick={() => handlePrevNext('prev')}>
+            <Button
+              disabled={currentPage <= 1 && currentPage < totalPages}
+              className={`text-dark-200 dark:text-light-800 ${
+                currentPage < 1 &&
+                currentPage < totalPages &&
+                'cursor-not-allowed'
+              }`}
+              onClick={() => handlePrevNext('prev')}
+            >
               <PaginationPrevious />
             </Button>
           </PaginationItem>
           {pages.map((page, index) => (
             <PaginationItem key={index}>
-              {page === -1 ? (
-                <PaginationEllipsis />
-              ) : (
-                <Button onClick={() => handleNavigation(page)}>{page}</Button>
-              )}
+              <Button
+                className={`size-6 p-1 px-2 font-semibold  ${
+                  currentPage === page
+                    ? 'rounded-full bg-primary-500 text-light-900 '
+                    : 'text-dark-200 dark:text-light-700'
+                }`}
+                onClick={() => handleNavigation(page)}
+              >
+                {page}
+              </Button>
             </PaginationItem>
           ))}
 
           <PaginationItem>
-            <Button onClick={() => handlePrevNext('next')}>
-              <PaginationNext />
+            <Button
+              disabled={currentPage >= totalPages}
+              className='p-0 '
+              onClick={() => handlePrevNext('next')}
+            >
+              <PaginationNext className='text-dark-200 dark:text-light-800' />
             </Button>
           </PaginationItem>
         </PaginationContent>

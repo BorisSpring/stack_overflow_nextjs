@@ -8,16 +8,18 @@ import { QuestionFilters } from '@/constants/filters';
 import Filter from '@/components/shared/Filter';
 import { QuestionCardProps } from '@/lib/actions/shared.types';
 import { SearchParamsProps } from '@/types';
+import PaginationComponent from '@/components/shared/PaginationComponent';
 
 const page = async ({ searchParams }: SearchParamsProps) => {
   const { userId } = auth();
 
   if (!userId) return null;
 
-  const userCollection = await findSavedQuestions({
+  const results = await findSavedQuestions({
     clerkId: userId,
     searchQuery: searchParams.query,
     filter: searchParams.filter,
+    page: Number(searchParams?.page) || 1,
   });
 
   return (
@@ -41,8 +43,9 @@ const page = async ({ searchParams }: SearchParamsProps) => {
         />
       </div>
       <div className='mt-6 flex w-full flex-col gap-6'>
-        {userCollection !== undefined && userCollection.saved?.length > 0 ? (
-          userCollection.saved.map((question: QuestionCardProps) => (
+        {results?.user?.saved !== undefined &&
+        results.user.saved?.length > 0 ? (
+          results.user.saved.map((question: QuestionCardProps) => (
             <QuestionCard
               key={question._id}
               _id={question._id}
@@ -64,6 +67,10 @@ const page = async ({ searchParams }: SearchParamsProps) => {
           />
         )}
       </div>
+      <PaginationComponent
+        currentPage={Number(searchParams.page) || 1}
+        totalPages={results?.totalPages}
+      />
     </>
   );
 };

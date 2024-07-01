@@ -13,9 +13,10 @@ import Link from 'next/link';
 import React from 'react';
 
 const Home = async ({ searchParams }: SearchParamsProps) => {
-  const results = await getQuestions({
+  const { questions, totalPages } = await getQuestions({
     searchQuery: searchParams.query,
     filter: searchParams.filter,
+    page: Number(searchParams.page) || 1,
   });
 
   return (
@@ -45,8 +46,8 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
         />
       </div>
       <div className='mt-6 flex w-full flex-col gap-6'>
-        {results !== undefined && results.questions?.length > 0 ? (
-          results.questions.map((question: QuestionCardProps) => (
+        {questions?.length > 0 ? (
+          questions.map((question: QuestionCardProps) => (
             <QuestionCard
               key={question._id}
               _id={question._id}
@@ -68,7 +69,10 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
           />
         )}
       </div>
-      <PaginationComponent />
+      <PaginationComponent
+        currentPage={Number(searchParams.page) || 1}
+        totalPages={totalPages}
+      />
     </>
   );
 };

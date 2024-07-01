@@ -63,7 +63,7 @@ export interface GetTopInteractiveTagsParams {
 export interface GetAllTagsParams {
   page?: number;
   pageSize?: number;
-  filter?: string;
+  sortBy?: string;
   searchQuery?: string;
 }
 

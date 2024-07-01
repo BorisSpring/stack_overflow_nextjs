@@ -36,7 +36,7 @@ export async function getTopInteractiveTags(
 
 export async function getAllTags(params: GetAllTagsParams) {
   return await executeMethodWithTryCatch(async () => {
-    const { page = 1, pageSize = 10, searchQuery, filter } = params;
+    const { page = 1, pageSize = 10, searchQuery, sortBy } = params;
 
     const query: FilterQuery<typeof Tag> = searchQuery
       ? { name: { $regex: new RegExp(searchQuery, 'i') } }
@@ -44,7 +44,7 @@ export async function getAllTags(params: GetAllTagsParams) {
 
     let sortOptions = {};
 
-    switch (filter) {
+    switch (sortBy) {
       case 'popular':
         sortOptions = { questions: -1 };
         break;
@@ -61,10 +61,17 @@ export async function getAllTags(params: GetAllTagsParams) {
         break;
     }
 
-    return await Tag.find(query)
-      .sort(sortOptions)
-      .skip((page - 1) * pageSize)
-      .limit(pageSize);
+    const [tags, totalDocuments] = await Promise.all([
+      Tag.find(query)
+        .sort(sortOptions)
+        .skip((page - 1) * pageSize)
+        .limit(pageSize),
+      Tag.countDocuments(),
+    ]);
+
+    const totalPages = Math.ceil(totalDocuments / pageSize);
+
+    return { tags, totalPages };
   });
 }
 
@@ -81,25 +88,40 @@ export async function getTagQuestions(params: getQuestionsByTagIdParams) {
         }
       : {};
 
-    const tag = await Tag.findOne({ _id: tagId })
+    const findTagPromise = Tag.findOne({ _id: tagId })
       .select('name questions')
       .populate({
         path: 'questions',
         model: Question,
         match: questionFilter,
-        options: { sort: { createdAt: -1 } },
+        options: {
+          skip: (page - 1) * pageSize,
+          limit: pageSize,
+          sort: { createdAt: -1 },
+        },
         select:
           'title content  tags  views upvotes  downvotes  author  createdAt',
         populate: [
           { path: 'tags', model: Tag, select: 'name' },
           { path: 'author', model: User, select: 'clerkId picture name' },
         ],
-      })
-      .skip((page - 1) * pageSize)
-      .limit(pageSize);
+      });
+
+    const totalDocumentsPromsie = Question.countDocuments({
+      tags: tagId,
+      ...questionFilter,
+    });
+
+    const [tag, totalDocuments] = await Promise.all([
+      findTagPromise,
+      totalDocumentsPromsie,
+    ]);
 
     if (!tag) throw new Error('Tag not found!');
-    return tag;
+
+    const totalPages = Math.ceil(totalDocuments / pageSize);
+
+    return { tag, totalPages };
   });
 }
 

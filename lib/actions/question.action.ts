@@ -59,16 +59,21 @@ export async function getQuestions(params: GetQuestionsParams) {
         break;
     }
 
-    const questions = await Question.find(query)
-      .sort(sortOptions)
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .populate([
-        { path: 'tags', model: Tag },
-        { path: 'author', model: User },
-      ]);
+    const [totalDocuments, questions] = await Promise.all([
+      Question.countDocuments(query),
+      Question.find(query)
+        .sort(sortOptions)
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
+        .populate([
+          { path: 'tags', model: Tag },
+          { path: 'author', model: User },
+        ]),
+    ]);
 
-    return { questions };
+    const totalPages = Math.ceil(totalDocuments / pageSize);
+
+    return { questions, totalPages };
   });
 }
 

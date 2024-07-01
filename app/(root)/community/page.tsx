@@ -1,5 +1,6 @@
 import UserCard from '@/components/cards/UserCard';
 import Filter from '@/components/shared/Filter';
+import PaginationComponent from '@/components/shared/PaginationComponent';
 import LocalSearchBar from '@/components/shared/search/LocalSearchBar';
 import { UserFilters } from '@/constants/filters';
 import { getAllUsers } from '@/lib/actions/user.action';
@@ -8,9 +9,10 @@ import Link from 'next/link';
 import React from 'react';
 
 const page = async ({ searchParams }: SearchParamsProps) => {
-  const result = await getAllUsers({
+  const { users, totalPages } = await getAllUsers({
     searchQuery: searchParams.query,
     filter: searchParams.filter,
+    page: Number(searchParams.page) || 1,
   });
 
   return (
@@ -31,10 +33,8 @@ const page = async ({ searchParams }: SearchParamsProps) => {
         />
       </div>
       <section className='mt-10 flex flex-wrap justify-start gap-4'>
-        {result !== undefined && result.users.length > 0 ? (
-          result.users.map((user: any) => (
-            <UserCard key={user._id} user={user} />
-          ))
+        {users.length > 0 ? (
+          users.map((user: any) => <UserCard key={user._id} user={user} />)
         ) : (
           <div className='paragraph-regular text-dark200_light800 mx-auto  max-w-4xl text-center'>
             <p> No users yet</p>
@@ -44,6 +44,10 @@ const page = async ({ searchParams }: SearchParamsProps) => {
           </div>
         )}
       </section>
+      <PaginationComponent
+        currentPage={Number(searchParams.page) || 1}
+        totalPages={totalPages}
+      />
     </>
   );
 };

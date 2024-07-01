@@ -1,5 +1,6 @@
 import QuestionCard from '@/components/cards/QuestionCard';
 import NoResult from '@/components/shared/NoResult';
+import PaginationComponent from '@/components/shared/PaginationComponent';
 import LocalSearchBar from '@/components/shared/search/LocalSearchBar';
 import { QuestionCardProps } from '@/lib/actions/shared.types';
 import { getTagQuestions } from '@/lib/actions/tag.action';
@@ -7,13 +8,12 @@ import { URLProps } from '@/types';
 import React from 'react';
 
 const Page = async ({ params, searchParams }: URLProps) => {
-  const tag = await getTagQuestions({
+  const { tag, totalPages } = await getTagQuestions({
     tagId: params.id,
-    page: 1,
     searchQuery: searchParams.query,
+    page: Number(searchParams?.page) || 1,
   });
 
-  console.log(tag.questions);
   return (
     <div className='flex flex-col gap-5'>
       <h2 className='h2-semibold text-dark-300 dark:text-light-900'>
@@ -48,6 +48,10 @@ const Page = async ({ params, searchParams }: URLProps) => {
           linkTitle='Ask a Question'
         />
       )}
+      <PaginationComponent
+        currentPage={Number(searchParams.page) || 1}
+        totalPages={totalPages}
+      />
     </div>
   );
 };
