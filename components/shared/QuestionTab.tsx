@@ -10,12 +10,7 @@ interface Props extends SearchParamsProps {
   totalQuestions: number;
 }
 
-const QuestionTab = async ({
-  userId,
-  searchParams,
-  clerkId,
-  totalQuestions,
-}: Props) => {
+const QuestionTab = async ({ userId, clerkId, totalQuestions }: Props) => {
   if (totalQuestions < 1) {
     return (
       <p className='paragraph-semibold text-dark200_light800 mt-7'>

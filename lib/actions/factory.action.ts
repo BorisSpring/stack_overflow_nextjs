@@ -1,11 +1,11 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
+import { DownVoteOrUpvoteParams } from './shared.types';
+import { executeMethodWithTryAndTransactiona } from '../utils';
+import User from '@/database/user.model';
 import Answer from '@/database/answer.model';
 import Question from '@/database/question.model';
-import { revalidatePath } from 'next/cache';
-import { executeMethodWithTryAndTransactiona } from '../utils';
-import { DownVoteOrUpvoteParams } from './shared.types';
-import User from '@/database/user.model';
 import { ClientSession } from 'mongoose';
 
 export async function upVote(params: DownVoteOrUpvoteParams) {

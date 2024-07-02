@@ -28,7 +28,6 @@ interface Props {
 const Answer = ({ questionId, authorId, question }: Props) => {
   const editorRef = useRef(null);
   const pathName = usePathname();
-  // const [isSubmitingAi, setIsSubmitingAi] = useState(false);
 
   const form = useForm<z.infer<typeof AnswerSchema>>({
     resolver: zodResolver(AnswerSchema),
@@ -64,17 +63,6 @@ const Answer = ({ questionId, authorId, question }: Props) => {
       showToast(error.message);
     }
   }
-
-  // const generateAiAnswer = async () => {
-  //   if (!authorId) return;
-  //   setIsSubmitingAi(true);
-  //   try {
-  //     const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/`);
-  //   } catch (error) {
-  //   } finally {
-  //     setIsSubmitingAi(false);
-  //   }
-  // };
 
   return (
     <div>

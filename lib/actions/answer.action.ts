@@ -1,10 +1,10 @@
 'use server';
-import { CreateAnswerParams, DeleteAnswerParams } from './shared.types';
-import Answer from '@/database/answer.model';
-import Question from '@/database/question.model';
 import { revalidatePath } from 'next/cache';
+import { CreateAnswerParams, DeleteAnswerParams } from './shared.types';
 import { executeMethodWithTryAndTransactiona } from '../utils';
+import Question from '@/database/question.model';
 import User from '@/database/user.model';
+import Answer from '@/database/answer.model';
 import Interaction from '@/database/interaction.model';
 import { ClientSession } from 'mongoose';
 
@@ -24,12 +24,12 @@ export async function createAnswer(params: CreateAnswerParams) {
       { session }
     );
 
-    if (!answer) throw new Error('Fail to post answer!');
+    if (!answer[0]) throw new Error('Fail to post answer!');
 
     await Question.findByIdAndUpdate(
       questionId,
       {
-        $push: { answers: answer._id },
+        $push: { answers: answer[0]._id },
       },
       { session }
     );

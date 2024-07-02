@@ -7,8 +7,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { downVote, upVote } from '@/lib/actions/factory.action';
 import { toggleSaveQuestion } from '@/lib/actions/user.action';
 import { viewQuestion } from '@/lib/actions/interaction.action';
-import { toast, useToast } from '../ui/use-toast';
-import { format } from 'date-fns';
 
 interface Props {
   type: string;
