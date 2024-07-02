@@ -9,6 +9,15 @@ import Filter from '@/components/shared/Filter';
 import { QuestionCardProps } from '@/lib/actions/shared.types';
 import { SearchParamsProps } from '@/types';
 import PaginationComponent from '@/components/shared/PaginationComponent';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'User Saved Questions',
+  description: 'Look at your account collection of saved questions',
+  icons: {
+    icon: '/assets/images/site-logo.svg',
+  },
+};
 
 const page = async ({ searchParams }: SearchParamsProps) => {
   const { userId } = auth();

@@ -19,11 +19,7 @@ const TagCard = ({ tag }: Props) => {
         <Badge className=' background-light800_dark300 text-dark500_light700 subtle-medium w-fit rounded-[8px] border-none px-4 py-2 uppercase text-light-400 dark:text-light-500 '>
           {tag.name}
         </Badge>
-        <p className='small-regular text-dark300_light700'>
-          JavaScript, often abbreviated as JS, is a programming language that is
-          one of the core technologies of the World Wide Web, alongside HTML and
-          CSS
-        </p>
+
         <p className='body-semibold text-primary-500'>
           {tag.questions?.length} +
           <span className='text-dark400_light500 small-medium ml-2'>

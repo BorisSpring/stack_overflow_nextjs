@@ -33,6 +33,10 @@ const config = {
       screens: {
         xs: '420px',
       },
+      backgroundImage: {
+        auth: "url('/assets/images/auth-light.png')",
+        'auth-dark': "url('/assets/images/auth-dark.png')",
+      },
       colors: {
         primary: {
           500: '#FF7000',
@@ -54,15 +58,11 @@ const config = {
           400: '#858EAD',
         },
         'accent-blue': '#1DA1F2',
-        // border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
-        // primary: {
-        //   DEFAULT: 'hsl(var(--primary))',
-        //   foreground: 'hsl(var(--primary-foreground))',
-        // },
+
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',

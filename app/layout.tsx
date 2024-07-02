@@ -1,13 +1,13 @@
 import React from 'react';
-import './globals.css';
 import '../styles/theme.css';
 import '../styles/prismjs.css';
-
-import { ClerkProvider } from '@clerk/nextjs';
+import '../styles/globals.css';
 
 // eslint-disable-next-line camelcase
 import { Inter, Space_Grotesk } from 'next/font/google';
+
 import type { Metadata } from 'next';
+import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from '@/context/themeProvider';
 
 export const metadata: Metadata = {

@@ -16,12 +16,12 @@ import {
 // shared types
 import {
   CreateQuestionParams,
-  UpdateUserParams,
   GetQuestionsParams,
   GetQuestionByIdParams,
   DeleteQuestionParams,
   getQuestionToBeEditedParams,
   UpdateQuestionParams,
+  GetRecommendedQuestionsParams,
 } from './shared.types';
 
 import Answer from '@/database/answer.model';
@@ -30,7 +30,7 @@ import { ClientSession, FilterQuery } from 'mongoose';
 
 export async function getQuestions(params: GetQuestionsParams) {
   return await executeMethodWithTryCatch(async () => {
-    const { searchQuery, page = 1, pageSize = 10, filter } = params;
+    const { searchQuery, page = 1, pageSize = 2, filter } = params;
 
     const query: FilterQuery<typeof Question> = searchQuery
       ? {
@@ -113,16 +113,6 @@ export async function createQuestion(params: CreateQuestionParams) {
         tags: tagDocuments,
       }),
     ]);
-
-    revalidatePath(path);
-  });
-}
-
-export async function updateUser(params: UpdateUserParams) {
-  await executeMethodWithTryAndTransactiona(async () => {
-    const { clerkId, updatedData, path } = params;
-
-    await User.findOneAndUpdate({ clerkId }, updatedData);
 
     revalidatePath(path);
   });
@@ -290,5 +280,51 @@ export async function hotQuestions() {
       .limit(5)
       .sort({ views: -1, upvotes: -1 })
       .select('title');
+  });
+}
+
+export async function getRecommendedQuestions(
+  params: GetRecommendedQuestionsParams
+) {
+  return await executeMethodWithTryCatch(async () => {
+    const { clerkId, page = 1, pageSize = 10, searchQuery } = params;
+
+    const user = await User.findOne({ clerkId });
+
+    if (!user) {
+      throw new Error('User not found!');
+    }
+
+    const userTags = await Interaction.find({
+      user: user._id,
+    })
+      .populate('tags')
+      .exec();
+
+    const distincUserTagIds = [...new Set(userTags.map((tag: any) => tag._id))];
+
+    const query: FilterQuery<typeof Question> = {
+      $and: [
+        { tags: { $in: distincUserTagIds } },
+        { author: { $ne: user._id } },
+      ],
+    };
+
+    if (searchQuery) {
+      query.$or = [
+        { title: { $regex: new RegExp(searchQuery, 'i') } },
+        { content: { $regex: new RegExp(searchQuery, 'i') } },
+      ];
+    }
+
+    const [questions, totalDocuments] = await Promise.all([
+      Question.find(query)
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
+        .populate({ path: 'author', select: 'clerkId image name' }),
+      Question.countDocuments(query),
+    ]);
+
+    return { questions, totalDocuments };
   });
 }

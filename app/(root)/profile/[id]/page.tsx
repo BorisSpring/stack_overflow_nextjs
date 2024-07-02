@@ -12,6 +12,15 @@ import ProfileLink from '@/components/shared/ProfileLink';
 import Stats from '@/components/shared/Stats';
 import QuestionTab from '@/components/shared/QuestionTab';
 import AnswerTab from '@/components/shared/AnswerTab';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'User Profile',
+  description: 'Profile of a user that is using devflow',
+  icons: {
+    icon: '/assets/images/site-logo.svg',
+  },
+};
 
 const page = async ({ params, searchParams }: URLProps) => {
   const userInfo = await getUserInfo({ clerkId: params.id! });

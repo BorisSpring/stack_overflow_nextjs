@@ -8,6 +8,7 @@ import {
   GetUserByIdParams,
   SaveQuestionParams,
   UpdateUserDetailsParams,
+  UpdateUserParams,
   findSavedQuestionsParams,
   getUserAnswerParams,
   getUserInfoParams,
@@ -335,5 +336,15 @@ export async function updateUserDetails(params: UpdateUserDetailsParams) {
     if (!updatedUser) throw new Error('Fail to update user!');
 
     revalidatePath(`/profile/${updatedUser.clerkId}`);
+  });
+}
+
+export async function updateUser(params: UpdateUserParams) {
+  await executeMethodWithTryAndTransactiona(async () => {
+    const { clerkId, updatedData, path } = params;
+
+    await User.findOneAndUpdate({ clerkId }, updatedData);
+
+    revalidatePath(path);
   });
 }

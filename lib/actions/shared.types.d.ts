@@ -186,3 +186,10 @@ export interface GlobSearchParams {
   type?: string | null;
   searchQuery?: string;
 }
+
+export interface GetRecommendedQuestionsParams {
+  searchQuery?: string;
+  page?: number;
+  pageSize?: number;
+  clerkId?: string;
+}

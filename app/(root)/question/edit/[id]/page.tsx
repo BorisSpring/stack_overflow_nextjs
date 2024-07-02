@@ -2,7 +2,16 @@ import Question from '@/components/forms/Question';
 import { ITag } from '@/database/tag.model';
 import { getQuestionToBeEdited } from '@/lib/actions/question.action';
 import { auth } from '@clerk/nextjs/server';
+import { Metadata } from 'next';
 import React from 'react';
+
+export const metadata: Metadata = {
+  title: 'Edit Question',
+  description: 'Edit Posted question that u asked for a help!',
+  icons: {
+    icon: '/assets/images/site-logo.svg',
+  },
+};
 
 interface Props {
   params: { id: string };

@@ -6,7 +6,17 @@ import LocalSearchBar from '@/components/shared/search/LocalSearchBar';
 import { TagFilters } from '@/constants/filters';
 import { getAllTags } from '@/lib/actions/tag.action';
 import { SearchParamsProps } from '@/types';
+import { Metadata } from 'next';
 import React from 'react';
+
+export const metadata: Metadata = {
+  title: 'Browse All Tags Of Devflow ',
+  description:
+    'Look at all avaiable tags in our application, also u can visit single tags that are displayed on this page!',
+  icons: {
+    icon: '/assets/images/site-logo.svg',
+  },
+};
 
 const page = async ({ searchParams }: SearchParamsProps) => {
   const { totalPages, tags } = await getAllTags({

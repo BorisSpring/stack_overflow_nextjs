@@ -5,7 +5,10 @@ import PaginationComponent from '@/components/shared/PaginationComponent';
 import LocalSearchBar from '@/components/shared/search/LocalSearchBar';
 import { Button } from '@/components/ui/button';
 import { HomePageFilters } from '@/constants/filters';
-import { getQuestions } from '@/lib/actions/question.action';
+import {
+  getQuestions,
+  getRecommendedQuestions,
+} from '@/lib/actions/question.action';
 import { QuestionCardProps } from '@/lib/actions/shared.types';
 import { SearchParamsProps } from '@/types';
 import { auth } from '@clerk/nextjs/server';
@@ -14,12 +17,26 @@ import Link from 'next/link';
 import React from 'react';
 
 const Home = async ({ searchParams }: SearchParamsProps) => {
-  const { questions, totalPages } = await getQuestions({
-    searchQuery: searchParams.query,
-    filter: searchParams.filter,
-    page: Number(searchParams.page) || 1,
-  });
+  let result;
   const { userId: clerkId } = auth();
+
+  const searchObject = {
+    searchQuery: searchParams.query,
+    page: Number(searchParams.page) || 1,
+  };
+
+  if (searchParams.filter === 'recommended') {
+    if (clerkId) {
+      result = await getRecommendedQuestions({ ...searchObject, clerkId });
+    } else {
+      result = { questions: [], totalPages: 0 };
+    }
+  } else {
+    result = await getQuestions({
+      ...searchObject,
+      filter: searchParams.filter,
+    });
+  }
   return (
     <>
       <div className='flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center'>
@@ -47,8 +64,8 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
         />
       </div>
       <div className='mt-6 flex w-full flex-col gap-6'>
-        {questions?.length > 0 ? (
-          questions.map((question: QuestionCardProps) => (
+        {result?.questions?.length > 0 ? (
+          result?.questions.map((question: QuestionCardProps) => (
             <QuestionCard
               clerkId={clerkId}
               key={question._id}
@@ -73,7 +90,7 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
       </div>
       <PaginationComponent
         currentPage={Number(searchParams.page) || 1}
-        totalPages={totalPages}
+        totalPages={result?.totalPages || 0}
       />
     </>
   );

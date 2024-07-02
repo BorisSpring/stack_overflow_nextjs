@@ -5,7 +5,16 @@ import LocalSearchBar from '@/components/shared/search/LocalSearchBar';
 import { QuestionCardProps } from '@/lib/actions/shared.types';
 import { getTagQuestions } from '@/lib/actions/tag.action';
 import { URLProps } from '@/types';
+import { Metadata } from 'next';
 import React from 'react';
+
+export const metadata: Metadata = {
+  title: 'Tag Details',
+  description: 'View specifig tag details and qustions!',
+  icons: {
+    icon: '/assets/images/site-logo.svg',
+  },
+};
 
 const Page = async ({ params, searchParams }: URLProps) => {
   const { tag, totalPages } = await getTagQuestions({

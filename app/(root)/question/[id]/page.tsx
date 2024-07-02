@@ -9,9 +9,18 @@ import { getUserById } from '@/lib/actions/user.action';
 import { formatNumber, getTimeStamp } from '@/lib/utils';
 import { URLProps } from '@/types';
 import { auth } from '@clerk/nextjs/server';
+import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
+
+export const metadata: Metadata = {
+  title: 'Look up a Question',
+  description: 'Look up for a specifig question in devflow!',
+  icons: {
+    icon: '/assets/images/site-logo.svg',
+  },
+};
 
 const page = async ({ params, searchParams }: URLProps) => {
   const question = await getQuestionById({

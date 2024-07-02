@@ -33,6 +33,7 @@ const Filter = ({ filters, otherClasses, containerClasses }: Props) => {
       params: searchParams.toString(),
       key: 'filter',
       value,
+      isFrist: true,
     });
     router.push(url, { scroll: false });
   };

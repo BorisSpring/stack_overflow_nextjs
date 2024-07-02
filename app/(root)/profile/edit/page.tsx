@@ -2,6 +2,15 @@ import React from 'react';
 import { getUserById } from '@/lib/actions/user.action';
 import { auth } from '@clerk/nextjs/server';
 import EditProfile from '@/components/forms/EditProfile';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Edit Profile Informations',
+  description: 'Edit your account information on this page',
+  icons: {
+    icon: '/assets/images/site-logo.svg',
+  },
+};
 
 const page = async () => {
   const { userId } = auth();

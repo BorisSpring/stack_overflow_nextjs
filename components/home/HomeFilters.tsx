@@ -29,6 +29,7 @@ const HomeFilters = () => {
         params: searchParams.toString(),
         key: 'filter',
         value,
+        isFrist: true,
       });
     }
     router.push(newUrl, { scroll: false });
@@ -40,10 +41,10 @@ const HomeFilters = () => {
         <Button
           key={value}
           onClick={() => handleTypeClick(value)}
-          className={` body-medium rounded-[8px]  px-6 py-2 font-medium capitalize shadow-none lg:py-3 ${
+          className={` rounded-[8px]  px-6 py-2 font-medium capitalize shadow-none lg:py-3 ${
             filter === value
-              ? 'bg-orange-200 text-primary-500 '
-              : ' text-dark500_light500 bg-light-800 hover:bg-light-700  hover:text-light-500 dark:bg-dark-300 hover:dark:bg-dark-400 hover:dark:text-light-900 '
+              ? 'bg-orange-200 font-semibold text-primary-500 dark:bg-orange-100 '
+              : ' text-dark500_light500 body-medium bg-light-800  hover:bg-light-700 hover:text-light-500 dark:bg-dark-300 hover:dark:bg-dark-400 hover:dark:text-light-900 '
           }`}
         >
           {name}

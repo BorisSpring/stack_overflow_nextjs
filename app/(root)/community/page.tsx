@@ -5,8 +5,17 @@ import LocalSearchBar from '@/components/shared/search/LocalSearchBar';
 import { UserFilters } from '@/constants/filters';
 import { getAllUsers } from '@/lib/actions/user.action';
 import { SearchParamsProps } from '@/types';
+import { Metadata } from 'next';
 import Link from 'next/link';
 import React from 'react';
+
+export const metadata: Metadata = {
+  title: 'Devflow User Informations',
+  description: 'Search up for other user that are using devflow app',
+  icons: {
+    icon: '/assets/images/site-logo.svg',
+  },
+};
 
 const page = async ({ searchParams }: SearchParamsProps) => {
   const { users, totalPages } = await getAllUsers({

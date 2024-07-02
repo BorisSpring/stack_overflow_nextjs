@@ -1,8 +1,22 @@
 import React from 'react';
-import { SignUp } from '@clerk/nextjs';
+import { Metadata } from 'next';
+import SignInSignUp from '@/components/shared/SignInSignUp';
 
-const page = () => {
-  return <SignUp />;
+export const metadata: Metadata = {
+  title: 'Devflow Sign Up',
+  description:
+    'Login page for devlow application with over 1,000,000 active users daily!',
+  icons: {
+    icon: '/assets/images/site-logo.svg',
+  },
 };
 
-export default page;
+const Page = () => {
+  return (
+    <>
+      <SignInSignUp isSignIn={false} />
+    </>
+  );
+};
+
+export default Page;

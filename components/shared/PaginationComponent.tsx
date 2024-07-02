@@ -50,9 +50,10 @@ const PaginationComponent = ({
     if (
       (direction === 'next' && currentPage >= totalPages) ||
       (direction === 'prev' && currentPage <= 1)
-    )
+    ) {
+      console.log('not wokrign');
       return;
-
+    }
     const value = direction === 'next' ? currentPage + 1 : currentPage - 1;
 
     const newUrl = formUrlQuery({

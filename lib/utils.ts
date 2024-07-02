@@ -7,6 +7,7 @@ import { BADGE_CRITERIA } from '@/constants';
 import { BadgeCounts } from '@/types';
 import { toast } from '@/components/ui/use-toast';
 import { format } from 'date-fns';
+import page from '@/app/(root)/(home)/page';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -89,12 +90,22 @@ interface UrlQueryParams {
   params: string;
   key: string;
   value: string | null;
+  isFrist?: boolean;
 }
 
-export const formUrlQuery = ({ params, key, value }: UrlQueryParams) => {
+export const formUrlQuery = ({
+  params,
+  key,
+  value,
+  isFrist,
+}: UrlQueryParams) => {
   const queryUrl = qs.parse(params);
 
   queryUrl[key] = value;
+
+  if (isFrist) {
+    queryUrl.page = '1';
+  }
 
   return qs.stringifyUrl(
     { url: window.location.pathname, query: queryUrl },
