@@ -27,6 +27,7 @@ interface Props {
 const Answer = ({ questionId, authorId, question }: Props) => {
   const editorRef = useRef(null);
   const pathName = usePathname();
+  // const [isSubmitingAi, setIsSubmitingAi] = useState(false);
 
   const form = useForm<z.infer<typeof AnswerSchema>>({
     resolver: zodResolver(AnswerSchema),
@@ -57,6 +58,17 @@ const Answer = ({ questionId, authorId, question }: Props) => {
       console.log(error);
     }
   }
+
+  // const generateAiAnswer = async () => {
+  //   if (!authorId) return;
+  //   setIsSubmitingAi(true);
+  //   try {
+  //     const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/`);
+  //   } catch (error) {
+  //   } finally {
+  //     setIsSubmitingAi(false);
+  //   }
+  // };
 
   return (
     <div>
@@ -136,7 +148,7 @@ const Answer = ({ questionId, authorId, question }: Props) => {
           <div className='mt-3 flex justify-end'>
             <Button
               type='submit'
-              // disabled={form.formState.isSubmitting}
+              disabled={form.formState.isSubmitting}
               className='primary-gradient w-fit rounded-[4px] text-[16px] font-semibold tracking-wider text-light-900 transition-all duration-200 hover:bg-primary-500'
             >
               {form.formState.isSubmitting ? 'Submitting' : 'Submit'}

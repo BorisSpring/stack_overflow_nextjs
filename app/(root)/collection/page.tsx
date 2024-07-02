@@ -25,7 +25,7 @@ const page = async ({ searchParams }: SearchParamsProps) => {
   return (
     <>
       <h2 className='h2-bold text-dark100_light900 text-center font-bold sm:text-left'>
-        All Questions
+        Saved Questions
       </h2>
 
       <div className='mt-11 flex flex-col justify-between gap-5  lg:flex-row '>

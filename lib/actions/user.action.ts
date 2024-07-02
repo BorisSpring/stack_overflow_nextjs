@@ -16,6 +16,7 @@ import {
 
 import Question from '@/database/question.model';
 import {
+  assignBadges,
   executeMethodWithTryAndTransactiona,
   executeMethodWithTryCatch,
 } from '../utils';
@@ -23,6 +24,7 @@ import { revalidatePath } from 'next/cache';
 import Tag from '@/database/tag.model';
 import Answer from '@/database/answer.model';
 import { FilterQuery } from 'mongoose';
+import { BadgeCriteriaType } from '@/types';
 
 export async function getUserById(
   params: GetUserByIdParams
@@ -192,10 +194,85 @@ export async function getUserInfo(params: getUserInfoParams) {
 
     if (!user) throw new Error('User not found!');
 
-    const totalQuestions = await Question.countDocuments({ author: user._id });
-    const totalAnswers = await Answer.countDocuments({ author: user._id });
+    const [
+      totalQuestions,
+      totalAnswers,
+      [questionsViews],
+      [questionUpvotes],
+      [answerUpvotes],
+    ] = await Promise.all([
+      Question.countDocuments({ author: user._id }),
+      Answer.countDocuments({ author: user._id }),
+      Question.aggregate([
+        {
+          $match: { author: user._id },
+        },
+        {
+          $group: {
+            _id: null,
+            totalViews: { $sum: '$views' },
+          },
+        },
+      ]),
+      Question.aggregate([
+        {
+          $match: {
+            author: user._id,
+          },
+        },
+        {
+          $project: { _id: 0, upvotes: { $size: '$upvotes' } },
+        },
+        {
+          $group: {
+            _id: null,
+            totalUpvotes: { $sum: '$upvotes' },
+          },
+        },
+      ]),
+      Answer.aggregate([
+        {
+          $match: {
+            author: user._id,
+          },
+        },
+        {
+          $project: { _id: 0, upvotes: { $size: '$upvotes' } },
+        },
+        {
+          $group: {
+            _id: null,
+            totalAnswerUpvotes: { $sum: '$upvotes' },
+          },
+        },
+      ]),
+    ]);
 
-    return { user, totalQuestions, totalAnswers };
+    const criteria = [
+      { type: 'QUESTION_COUNT' as BadgeCriteriaType, count: totalQuestions },
+      { type: 'ANSWER_COUNT' as BadgeCriteriaType, count: totalAnswers },
+      {
+        type: 'QUESTION_UPVOTES' as BadgeCriteriaType,
+        count: questionUpvotes.totalUpvotes,
+      },
+      {
+        type: 'ANSWER_UPVOTES' as BadgeCriteriaType,
+        count: answerUpvotes.totalAnswerUpvotes,
+      },
+      {
+        type: 'TOTAL_VIEWS' as BadgeCriteriaType,
+        count: questionsViews.totalViews,
+      },
+    ];
+
+    const badgeCounts = assignBadges({ criteria });
+
+    return {
+      user,
+      totalQuestions,
+      totalAnswers,
+      badgeCounts,
+    };
   });
 }
 

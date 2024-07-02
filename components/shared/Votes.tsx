@@ -45,8 +45,8 @@ const Votes = ({
   };
 
   const handleVote = async (action: string) => {
-    if (!userId || JSON.parse(authorId) === JSON.parse(userId)) return;
-
+    // if (!userId || JSON.parse(authorId) === JSON.parse(userId)) return;
+    if (!userId) return;
     const params = {
       hasUpVoted,
       hasDownVoted,

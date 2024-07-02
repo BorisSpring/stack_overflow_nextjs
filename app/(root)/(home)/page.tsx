@@ -22,9 +22,9 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
   return (
     <>
       <div className='flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center'>
-        <h2 className='h2-bold text-dark100_light900 text-center font-bold sm:text-left'>
+        <h1 className='h2-bold text-dark100_light900 text-center font-bold sm:text-left'>
           All Questions
-        </h2>
+        </h1>
         <Link href='/ask-a-question' className='flex justify-end '>
           <Button className='primary-gradient   paragraph-medium rounded-[10px] px-4 pt-3 text-light-900 max-sm:w-full '>
             Ask Question

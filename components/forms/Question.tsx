@@ -22,6 +22,7 @@ import Image from 'next/image';
 import { createQuestion, updateQuestion } from '@/lib/actions/question.action';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTheme } from '@/context/themeProvider';
+import { useToast } from '../ui/use-toast';
 
 const type: any = 'create';
 
@@ -29,7 +30,7 @@ interface Props {
   mongoUserId?: string;
   questionId?: string;
   title?: string;
-  tags: string[];
+  tags?: string[];
   content?: string;
   clerkId?: string;
 }
@@ -46,6 +47,7 @@ export function Question({
   const router = useRouter();
   const pathName = usePathname();
   const { mode } = useTheme();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof questionSchema>>({
     resolver: zodResolver(questionSchema),
@@ -74,7 +76,12 @@ export function Question({
             ...params,
             author: JSON.parse(mongoUserId!),
           });
-
+      toast({
+        title: `Successfully ${
+          pathName.startsWith('/question/edit') ? 'created' : 'edited'
+        } question!`,
+        description: '',
+      });
       router.push(questionId ? `/question/${questionId}` : '/');
     } catch (error) {
       console.error(error);
