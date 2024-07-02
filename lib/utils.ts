@@ -7,7 +7,6 @@ import { BADGE_CRITERIA } from '@/constants';
 import { BadgeCounts } from '@/types';
 import { toast } from '@/components/ui/use-toast';
 import { format } from 'date-fns';
-import page from '@/app/(root)/(home)/page';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

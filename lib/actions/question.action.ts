@@ -27,7 +27,6 @@ import {
 import Answer from '@/database/answer.model';
 import Interaction from '@/database/interaction.model';
 import { ClientSession, FilterQuery } from 'mongoose';
-import page from '@/app/(root)/(home)/page';
 
 export async function getQuestions(params: GetQuestionsParams) {
   return await executeMethodWithTryCatch(async () => {
