@@ -22,7 +22,7 @@ import Image from 'next/image';
 import { createQuestion, updateQuestion } from '@/lib/actions/question.action';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTheme } from '@/context/themeProvider';
-import { useToast } from '../ui/use-toast';
+import { showToast } from '@/lib/utils';
 
 const type: any = 'create';
 
@@ -47,7 +47,6 @@ export function Question({
   const router = useRouter();
   const pathName = usePathname();
   const { mode } = useTheme();
-  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof questionSchema>>({
     resolver: zodResolver(questionSchema),
@@ -59,6 +58,9 @@ export function Question({
   });
 
   async function onSubmit(values: z.infer<typeof questionSchema>) {
+    if (!clerkId) {
+      showToast('You must be logged in!');
+    }
     try {
       const params = {
         title: values.title,
@@ -76,14 +78,20 @@ export function Question({
             ...params,
             author: JSON.parse(mongoUserId!),
           });
-      toast({
-        title: `Successfully ${
-          pathName.startsWith('/question/edit') ? 'created' : 'edited'
-        } question!`,
-        description: '',
-      });
+
+      showToast(
+        `Successfully ${
+          pathName.startsWith('/question/edit') ? 'edited' : 'created'
+        } question!`
+      );
       router.push(questionId ? `/question/${questionId}` : '/');
     } catch (error) {
+      showToast(
+        `Fail to ${
+          pathName.startsWith('/question/edit') ? 'edit' : 'create'
+        } question!`
+      );
+
       console.error(error);
     }
   }

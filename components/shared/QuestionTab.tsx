@@ -18,13 +18,16 @@ const QuestionTab = async ({
 }: Props) => {
   if (totalQuestions < 1) {
     return (
-      <p className='paragraph-semibold text-dark200_light800'>
+      <p className='paragraph-semibold text-dark200_light800 mt-7'>
         User has not asked any question yet!{' '}
       </p>
     );
   }
 
-  const questions = await getUserTopQuestions({ author: userId, page: 1 });
+  const questions = await getUserTopQuestions({
+    author: userId,
+    page: 1,
+  });
 
   return (
     <div className='mt-10 flex flex-col gap-5 '>

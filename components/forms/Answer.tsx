@@ -17,6 +17,7 @@ import { useTheme } from '@/context/themeProvider';
 import { usePathname } from 'next/navigation';
 import { createAnswer } from '@/lib/actions/answer.action';
 import Image from 'next/image';
+import { showToast } from '@/lib/utils';
 
 interface Props {
   question: string;
@@ -39,7 +40,11 @@ const Answer = ({ questionId, authorId, question }: Props) => {
   const { mode } = useTheme();
 
   async function onSubmit(values: z.infer<typeof AnswerSchema>) {
-    if (!authorId) return;
+    if (!authorId) {
+      showToast('You must be logged in!');
+      return;
+    }
+
     try {
       await createAnswer({
         route: pathName,
@@ -53,9 +58,10 @@ const Answer = ({ questionId, authorId, question }: Props) => {
         editor.setContent('');
       }
 
+      showToast('Sussccesfuly posted answer!');
       form.reset();
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      showToast(error.message);
     }
   }
 

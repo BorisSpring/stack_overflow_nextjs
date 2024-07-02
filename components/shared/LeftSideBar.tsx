@@ -12,7 +12,7 @@ const LeftSideBar = () => {
   const { userId: clerkId } = useAuth();
 
   return (
-    <section className='background-light900_dark200  custom-scrollbar  sticky left-0 top-0 flex h-screen max-h-[1024px] flex-col justify-between overflow-y-auto border-r  px-6 pb-8 pt-28  shadow-light-200  dark:border-dark-400 dark:shadow-none max-sm:hidden lg:w-[266px]'>
+    <section className='background-light900_dark200  custom-scrollbar  sticky left-0 top-0 flex h-screen max-h-[1100px] flex-col justify-between overflow-y-auto border-r  px-6 pb-8 pt-28  shadow-light-200  dark:border-dark-400 dark:shadow-none max-sm:hidden lg:w-[266px]'>
       <div className='no-focus mx-auto flex w-full flex-col gap-3  pt-16 '>
         {sidebarLinks.map(({ imgURL, route, label }) => {
           const isActive = pathName === route;
@@ -41,7 +41,7 @@ const LeftSideBar = () => {
                 }
               />
               <p
-                className={` group-hover:font-medium group-hover:text-light-900 dark:text-light-800 max-md:hidden ${
+                className={` group-hover:font-medium group-hover:text-light-900 dark:text-light-800 max-lg:hidden ${
                   isActive ? 'base-bold' : 'base-semibold text-dark-500 '
                 }`}
               >

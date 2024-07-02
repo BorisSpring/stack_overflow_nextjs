@@ -18,7 +18,6 @@ const page = async ({ params, searchParams }: URLProps) => {
 
   const { userId: clerkId } = auth();
   const { user, totalQuestions, totalAnswers, badgeCounts } = userInfo;
-
   return (
     <>
       <div className='flex  flex-col-reverse items-start gap-[18px] lg:flex-row '>

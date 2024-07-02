@@ -186,10 +186,13 @@ export async function deleteQuestion(params: DeleteQuestionParams) {
 
     if (!user) throw new Error('User not found!');
 
-    const deletedQuestion = await Question.findOneAndDelete({
-      _id: itemId,
-      author: user._id,
-    });
+    const deletedQuestion = await Question.findOneAndDelete(
+      {
+        _id: itemId,
+        author: user._id,
+      },
+      { session }
+    );
 
     if (!deletedQuestion) throw new Error('Fail to delete question!');
 

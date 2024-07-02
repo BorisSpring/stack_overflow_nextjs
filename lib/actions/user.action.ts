@@ -14,7 +14,7 @@ import {
   getUserTopQuestionsParams,
 } from './shared.types';
 
-import Question from '@/database/question.model';
+import Question, { IQuestion } from '@/database/question.model';
 import {
   assignBadges,
   executeMethodWithTryAndTransactiona,
@@ -23,7 +23,7 @@ import {
 import { revalidatePath } from 'next/cache';
 import Tag from '@/database/tag.model';
 import Answer from '@/database/answer.model';
-import { FilterQuery } from 'mongoose';
+import { ClientSession, FilterQuery } from 'mongoose';
 import { BadgeCriteriaType } from '@/types';
 
 export async function getUserById(
@@ -39,22 +39,31 @@ export async function getUserById(
 
 export async function createUser(userData: CreateUserParams) {
   await executeMethodWithTryAndTransactiona(async () => {
-    const createdUser = await User.create(userData);
-    return createdUser;
+    return await User.create(userData);
   });
 }
 
 export async function deleteUser(params: DeleteUserParams) {
-  await executeMethodWithTryAndTransactiona(async () => {
-    const deletedUser = await User.findOneAndDelete(params);
+  await executeMethodWithTryAndTransactiona(async (session: ClientSession) => {
+    const deletedUser = await User.findOneAndDelete(params, { session });
 
     if (!deletedUser) throw new Error('User not found!');
 
-    // const userQuestionIds = await Question.find({
-    //   author: deletedUser._id,
-    // }).distinct('_id');
+    const questions = await Question.find({ author: deletedUser._id }).session(
+      session
+    );
+    const questionIds = questions.map((question: IQuestion) => question._id);
 
-    await Question.deleteMany({ author: deletedUser._id });
+    await Promise.all([
+      Answer.deleteMany({ author: deletedUser._id }, { session }),
+      Question.deleteMany({ _id: { $in: questionIds } }, { session }),
+    ]);
+
+    await Tag.updateMany(
+      { questions: { $in: questionIds } },
+      { $pull: { questions: { $in: questionIds } } },
+      { session }
+    );
 
     return deletedUser;
   });
@@ -104,7 +113,7 @@ export async function getAllUsers(params: GetAllUsersParams) {
 }
 
 export async function toggleSaveQuestion(params: SaveQuestionParams) {
-  await executeMethodWithTryAndTransactiona(async () => {
+  await executeMethodWithTryAndTransactiona(async (session: ClientSession) => {
     const { questionId, route, userId, isSaved } = params;
 
     const question = await Question.findById(questionId);
@@ -117,6 +126,7 @@ export async function toggleSaveQuestion(params: SaveQuestionParams) {
 
     const updatedUser = await User.findByIdAndUpdate(userId, queryObject, {
       new: true,
+      session,
     });
 
     if (!updatedUser) throw new Error('User not found!');
@@ -253,15 +263,15 @@ export async function getUserInfo(params: getUserInfoParams) {
       { type: 'ANSWER_COUNT' as BadgeCriteriaType, count: totalAnswers },
       {
         type: 'QUESTION_UPVOTES' as BadgeCriteriaType,
-        count: questionUpvotes.totalUpvotes,
+        count: questionUpvotes?.totalUpvotes | 0,
       },
       {
         type: 'ANSWER_UPVOTES' as BadgeCriteriaType,
-        count: answerUpvotes.totalAnswerUpvotes,
+        count: answerUpvotes?.totalAnswerUpvotes || 0,
       },
       {
         type: 'TOTAL_VIEWS' as BadgeCriteriaType,
-        count: questionsViews.totalViews,
+        count: questionsViews?.totalViews || 0,
       },
     ];
 
@@ -313,13 +323,13 @@ export async function getUserAnswers(params: getUserAnswerParams) {
 }
 
 export async function updateUserDetails(params: UpdateUserDetailsParams) {
-  await executeMethodWithTryAndTransactiona(async () => {
+  await executeMethodWithTryAndTransactiona(async (session: ClientSession) => {
     const { userId, ...updateParams } = params;
 
     const updatedUser = await User.findOneAndUpdate(
       { _id: userId },
       updateParams,
-      { new: true }
+      { new: true, session }
     );
 
     if (!updatedUser) throw new Error('Fail to update user!');

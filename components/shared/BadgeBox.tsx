@@ -12,7 +12,7 @@ const BadgeBox = ({ imgSrc, value, title, alt }: Props) => {
   return (
     <div
       className='flex min-h-[90px] w-full gap-4 bg-light-900 px-3 py-4
-     font-semibold text-dark-200 shadow-light-100 dark:border-dark-300 dark:bg-dark-200 dark:text-light-800  dark:shadow-dark-200 sm:flex-col 2xl:flex-row  2xl:items-center'
+     font-semibold text-dark-200 shadow-light-100 dark:border-dark-300  dark:bg-dark-200 dark:text-light-800  dark:shadow-dark-200 sm:flex-col 2xl:flex-row  2xl:items-center'
     >
       <Image src={imgSrc} width={36.25} height={50} alt={alt} />
       {/* answer box */}

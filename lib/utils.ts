@@ -5,6 +5,8 @@ import mongoose, { ClientSession } from 'mongoose';
 import qs from 'query-string';
 import { BADGE_CRITERIA } from '@/constants';
 import { BadgeCounts } from '@/types';
+import { toast } from '@/components/ui/use-toast';
+import { format } from 'date-fns';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -146,4 +148,11 @@ export const assignBadges = (params: BadgeParam) => {
     });
   });
   return badgeCounts;
+};
+
+export const showToast = (title: string) => {
+  toast({
+    title,
+    description: `${format(Date.now(), 'EEE d MMMM, h:mm a')}`,
+  });
 };

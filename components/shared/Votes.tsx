@@ -2,11 +2,13 @@
 import React, { useEffect } from 'react';
 import { Button } from '../ui/button';
 import Image from 'next/image';
-import { formatNumber } from '@/lib/utils';
+import { formatNumber, showToast } from '@/lib/utils';
 import { usePathname, useRouter } from 'next/navigation';
 import { downVote, upVote } from '@/lib/actions/factory.action';
 import { toggleSaveQuestion } from '@/lib/actions/user.action';
 import { viewQuestion } from '@/lib/actions/interaction.action';
+import { toast, useToast } from '../ui/use-toast';
+import { format } from 'date-fns';
 
 interface Props {
   type: string;
@@ -34,19 +36,34 @@ const Votes = ({
   const router = useRouter();
 
   const handleSave = async () => {
-    if (type !== 'Question' || !userId || hasSaved === undefined) return;
+    if (type !== 'Question' || hasSaved === undefined) return;
 
-    await toggleSaveQuestion({
-      questionId: JSON.parse(itemId),
-      route: pathName,
-      userId: JSON.parse(userId),
-      isSaved: hasSaved,
-    });
+    if (!userId) {
+      showToast('You must be logged in!');
+      return;
+    }
+
+    try {
+      await toggleSaveQuestion({
+        questionId: JSON.parse(itemId),
+        route: pathName,
+        userId: JSON.parse(userId),
+        isSaved: hasSaved,
+      });
+      showToast(`Succesfully saved question to collection!`);
+    } catch (error) {
+      showToast(`Fail to save a question to collection!`);
+    }
   };
 
   const handleVote = async (action: string) => {
-    // if (!userId || JSON.parse(authorId) === JSON.parse(userId)) return;
-    if (!userId) return;
+    if (!userId) {
+      showToast('You must be logged in!');
+      return;
+    } else if (JSON.parse(authorId) === JSON.parse(userId)) {
+      showToast('You u cannot up vote/ down vote your question and answers!');
+      return;
+    }
     const params = {
       hasUpVoted,
       hasDownVoted,
@@ -55,8 +72,14 @@ const Votes = ({
       itemId: JSON.parse(itemId),
       type,
     };
-
-    await (action === 'upvote' ? upVote(params) : downVote(params));
+    try {
+      await (action === 'upvote' ? upVote(params) : downVote(params));
+      showToast(
+        `Succesfully  ${action === 'upvote' ? 'up voted' : 'down voted'}!`
+      );
+    } catch (error) {
+      showToast(`Fail to ${action === 'upvote' ? 'up vote' : 'down vote'}!`);
+    }
   };
 
   useEffect(() => {
@@ -70,7 +93,7 @@ const Votes = ({
     <div className='-mt-2  flex items-start gap-5 '>
       <div className='flex gap-2.5'>
         <Button
-          onClick={(e) => handleVote('upvote')}
+          onClick={() => handleVote('upvote')}
           className='flex w-[42px]  items-center gap-1 p-0'
         >
           <Image

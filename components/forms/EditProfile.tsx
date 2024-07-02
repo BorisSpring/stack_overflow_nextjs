@@ -19,9 +19,7 @@ import { Textarea } from '../ui/textarea';
 import { UpdateUserDetailsParams } from '@/lib/actions/shared.types';
 import { updateUserDetails } from '@/lib/actions/user.action';
 import { useRouter } from 'next/navigation';
-import { useToast } from '../ui/use-toast';
-import { now } from 'mongoose';
-import { format } from 'date-fns';
+import { showToast } from '@/lib/utils';
 
 interface Props extends UpdateUserDetailsParams {
   clerkId: string;
@@ -37,7 +35,6 @@ const EditProfile = ({
   clerkId,
 }: Props) => {
   const router = useRouter();
-  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
@@ -51,21 +48,26 @@ const EditProfile = ({
   });
 
   async function onHandleSubmit(values: z.infer<typeof profileSchema>) {
-    await updateUserDetails({
-      userId: JSON.parse(userId),
-      name: values.name,
-      bio: values.bio,
-      username: values.username,
-      location: values.location,
-      portfolioWebsite: values.portfolioWebsite,
-    });
+    if (!clerkId) {
+      showToast('You must be logged in!');
+      return;
+    }
+    try {
+      await updateUserDetails({
+        userId: JSON.parse(userId),
+        name: values.name,
+        bio: values.bio,
+        username: values.username,
+        location: values.location,
+        portfolioWebsite: values.portfolioWebsite,
+      });
 
-    toast({
-      title: 'Successfully updated profile details!',
-      description: `${format(Date.now(), 'EEE d MMMM, h:mm a')}`,
-    });
+      showToast('Successfully updated profile details!');
 
-    router.push(`/profile/${clerkId}`);
+      router.push(`/profile/${clerkId}`);
+    } catch (error) {
+      showToast('Fail to updated profile details!');
+    }
   }
 
   return (

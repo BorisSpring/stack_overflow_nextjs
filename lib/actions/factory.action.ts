@@ -6,9 +6,10 @@ import { revalidatePath } from 'next/cache';
 import { executeMethodWithTryAndTransactiona } from '../utils';
 import { DownVoteOrUpvoteParams } from './shared.types';
 import User from '@/database/user.model';
+import { ClientSession } from 'mongoose';
 
 export async function upVote(params: DownVoteOrUpvoteParams) {
-  await executeMethodWithTryAndTransactiona(async () => {
+  await executeMethodWithTryAndTransactiona(async (session: ClientSession) => {
     const { userId, itemId, route, hasUpVoted, hasDownVoted, type } = params;
 
     let updateQuery = {};
@@ -30,26 +31,35 @@ export async function upVote(params: DownVoteOrUpvoteParams) {
 
     // eslint-disable-next-line no-unused-vars
     const [_, result] = await Promise.all([
-      User.findByIdAndUpdate(userId, {
-        $inc: { reputation: hasUpVoted ? -1 : 1 },
-      }),
+      User.findByIdAndUpdate(
+        userId,
+        {
+          $inc: { reputation: hasUpVoted ? -1 : 1 },
+        },
+        { session }
+      ),
       mongoModel.findByIdAndUpdate(itemId, updateQuery, {
         new: true,
+        session,
       }),
     ]);
 
     if (!result) throw new Error(`${type} not found!`);
 
-    await User.findByIdAndUpdate(result.author, {
-      $inc: { reputation: hasUpVoted ? -10 : 10 },
-    });
+    await User.findByIdAndUpdate(
+      result.author,
+      {
+        $inc: { reputation: hasUpVoted ? -10 : 10 },
+      },
+      { session }
+    );
 
     revalidatePath(route);
   });
 }
 
 export async function downVote(params: DownVoteOrUpvoteParams) {
-  await executeMethodWithTryAndTransactiona(async () => {
+  await executeMethodWithTryAndTransactiona(async (session: ClientSession) => {
     const { userId, itemId, route, hasUpVoted, hasDownVoted, type } = params;
 
     let updateQuery = {};
@@ -71,27 +81,36 @@ export async function downVote(params: DownVoteOrUpvoteParams) {
 
     // eslint-disable-next-line no-unused-vars
     const [_, result] = await Promise.all([
-      User.findByIdAndUpdate(userId, {
-        $inc: {
-          reputation: hasDownVoted
-            ? type === 'answer'
-              ? 2
-              : 1
-            : type === 'answer'
-            ? -2
-            : -1,
+      User.findByIdAndUpdate(
+        userId,
+        {
+          $inc: {
+            reputation: hasDownVoted
+              ? type === 'answer'
+                ? 2
+                : 1
+              : type === 'answer'
+              ? -2
+              : -1,
+          },
         },
-      }),
+        { session }
+      ),
       mongoModel.findByIdAndUpdate(itemId, updateQuery, {
         new: true,
+        session,
       }),
     ]);
 
     if (!result) throw new Error(`${type} not found!`);
 
-    await User.findByIdAndUpdate(result.author, {
-      $inc: { reputation: hasDownVoted ? 10 : -10 },
-    });
+    await User.findByIdAndUpdate(
+      result.author,
+      {
+        $inc: { reputation: hasDownVoted ? 10 : -10 },
+      },
+      { session }
+    );
 
     revalidatePath(route);
   });

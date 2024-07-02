@@ -59,7 +59,6 @@ const AnswerCard = ({
           value={author.name}
           title={` •  answered ${getTimeStamp(createdAt)}`}
           textStyles='paragraph-medium text-dark-200 dark:text-light-700'
-          href={`/profile/${author.clerkId}`}
           isAuthor
         />
         <Metric

@@ -19,14 +19,14 @@ const QuestionCard = ({
   clerkId,
 }: QuestionCardProps) => {
   return (
-    <div className='card-wrapper flex flex-col gap-5 rounded-[10px] p-9 sm:px-11'>
+    <div className='card-wrapper m-auto flex w-full flex-col gap-5 rounded-[10px] p-9  sm:px-11 '>
       <div className='flex  flex-col-reverse items-start justify-between gap-5 sm:flex-row'>
         <div>
-          <span className='subtle-regular text-dark400_light700 line-clamp-1 flex sm:hidden'>
+          <span className='subtle-regular text-dark400_light700 line-clamp-1 flex  sm:hidden'>
             {getTimeStamp(createdAt)}
           </span>
           <Link href={`/question/${_id}`}>
-            <h3 className='sm:h3-semibold base-semibold text-dark200_light900 line-clamp-2 hover:line-clamp-none'>
+            <h3 className='sm:h3-semibold base-semibold text-dark200_light900 line-clamp-1 w-[240px] overflow-hidden text-ellipsis break-words hover:line-clamp-none md:w-[400px] lg:w-[600px]'>
               {title}
             </h3>
           </Link>
@@ -34,6 +34,7 @@ const QuestionCard = ({
         <EditDeleteAction
           type='question'
           itemId={_id.toString()}
+          authorClerkId={author.clerkId}
           loggedUserClerkId={clerkId}
         />
       </div>

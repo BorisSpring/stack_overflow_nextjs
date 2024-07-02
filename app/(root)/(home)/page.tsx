@@ -8,6 +8,7 @@ import { HomePageFilters } from '@/constants/filters';
 import { getQuestions } from '@/lib/actions/question.action';
 import { QuestionCardProps } from '@/lib/actions/shared.types';
 import { SearchParamsProps } from '@/types';
+import { auth } from '@clerk/nextjs/server';
 
 import Link from 'next/link';
 import React from 'react';
@@ -18,7 +19,7 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
     filter: searchParams.filter,
     page: Number(searchParams.page) || 1,
   });
-
+  const { userId: clerkId } = auth();
   return (
     <>
       <div className='flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center'>
@@ -49,6 +50,7 @@ const Home = async ({ searchParams }: SearchParamsProps) => {
         {questions?.length > 0 ? (
           questions.map((question: QuestionCardProps) => (
             <QuestionCard
+              clerkId={clerkId}
               key={question._id}
               _id={question._id}
               title={question.title}
