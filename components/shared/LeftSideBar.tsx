@@ -17,8 +17,12 @@ const LeftSideBar = () => {
         {sidebarLinks.map(({ imgURL, route, label }) => {
           const isActive = pathName === route;
 
-          if (route === '/profile' && clerkId) {
-            route = `/profile/${clerkId}`;
+          if (route === '/profile') {
+            if (clerkId) {
+              route = `/profile/${clerkId}`;
+            } else {
+              return undefined;
+            }
           }
 
           return (

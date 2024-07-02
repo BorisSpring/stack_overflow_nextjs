@@ -17,7 +17,6 @@ const SignInSignUp = ({ isSignIn }: Props) => {
             mode === 'dark' ? 'auth-dark' : 'auth-light'
           }.png`}
           alt='background image'
-          layout='responsive'
           width={800}
           height={600}
           className='object-cover'

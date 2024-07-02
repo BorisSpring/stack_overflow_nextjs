@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import React from 'react';
-import RedenerTag from '../shared/RedenerTag';
 import Link from 'next/link';
 import { getTopInteractiveTags } from '@/lib/actions/tag.action';
+import { Badge } from '../ui/badge';
 
 interface Props {
   user: {
@@ -21,7 +21,7 @@ const UserCard = async ({ user }: Props) => {
       href={`/profile/${user.clerkId}`}
       className='background-light900_dark200 w-[260px] rounded-[10px] border border-light-900 shadow-light-100  dark:border-dark-300 dark:shadow-none max-xs:w-full'
     >
-      <article className=' flex flex-col items-center justify-center gap-3 p-[30px] '>
+      <article className=' flex flex-col items-center justify-center gap-3 px-[10px] py-[20px] '>
         <Image
           width={100}
           height={100}
@@ -39,14 +39,19 @@ const UserCard = async ({ user }: Props) => {
             </p>
           )}
         </div>
-        <div className='mt-1 flex flex-wrap items-center justify-center gap-2.5'>
-          {tags?.length > 4 ? (
-            tags.map(({ _id, name }) => (
-              <RedenerTag key={_id} _id={_id} name={name} showCount={false} />
+        <div className='mt-auto flex flex-wrap items-center justify-center gap-2.5'>
+          {tags?.length > 0 ? (
+            tags.map(({ _id, name }: any) => (
+              <Badge
+                key={_id}
+                className='small-medium background-light800_dark300 text-dark500_light700 w-fit  rounded-[8px] border-none p-2 uppercase  text-dark-300 dark:text-light-700 '
+              >
+                {name}
+              </Badge>
             ))
           ) : (
             <div className='text-dark300_light700 mx-auto text-center font-semibold'>
-              No tags yet
+              User hasnt use any tags yet!
             </div>
           )}
         </div>

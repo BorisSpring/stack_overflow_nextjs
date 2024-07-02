@@ -1,7 +1,6 @@
 'use server';
 
 import User from '@/database/user.model';
-import { connectToDatabase } from '../mongoose';
 import {
   GetAllTagsParams,
   GetTopInteractiveTagsParams,
@@ -11,27 +10,49 @@ import Tag from '@/database/tag.model';
 import { executeMethodWithTryCatch } from '../utils';
 import { FilterQuery } from 'mongoose';
 import Question from '@/database/question.model';
+import Interaction from '@/database/interaction.model';
 
 export async function getTopInteractiveTags(
   params: GetTopInteractiveTagsParams
 ) {
-  try {
-    connectToDatabase();
-    const { userId, limit } = params;
+  return await executeMethodWithTryCatch(async () => {
+    const { userId } = params;
 
     const user = await User.findById(userId);
-
     if (!user) throw new Error('User not found!');
 
-    return [
-      { name: 'a', _id: '1' },
-      { name: 'b', _id: '3' },
-      { name: 'c', _id: '2' },
-    ];
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+    return await Interaction.aggregate([
+      {
+        $match: {
+          user: userId,
+        },
+      },
+      {
+        $lookup: {
+          from: 'tags',
+          localField: 'tags',
+          foreignField: '_id',
+          as: 'tags',
+        },
+      },
+      {
+        $unwind: '$tags',
+      },
+      {
+        $group: {
+          _id: '$tags._id',
+          name: { $first: '$tags.name' },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { count: -1 },
+      },
+      {
+        $limit: 3,
+      },
+    ]);
+  });
 }
 
 export async function getAllTags(params: GetAllTagsParams) {
