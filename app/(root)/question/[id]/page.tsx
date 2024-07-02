@@ -23,9 +23,10 @@ export const metadata: Metadata = {
 };
 
 const page = async ({ params, searchParams }: URLProps) => {
-  const question = await getQuestionById({
+  const result = await getQuestionById({
     questionId: params.id,
     filter: searchParams.filter,
+    page: Number(searchParams.page || 1),
   });
   const { userId: clerkId } = auth();
 
@@ -40,81 +41,84 @@ const page = async ({ params, searchParams }: URLProps) => {
       {/* actions user details about question */}
       <div className='flex min-h-[56px] justify-between  '>
         <Link
-          href={`/profile/${question?.author?.clerkId}`}
+          href={`/profile/${result?.question?.author?.clerkId}`}
           className='flex items-center gap-1 self-end '
         >
           <Image
-            src={question?.author.picture}
+            src={result?.question?.author.picture}
             className='rounded-full'
             width={22}
             height={22}
             alt='User avatar'
           />
           <p className='paragraph-semibold text-dark300_light700'>
-            {question?.author.name}
+            {result?.question?.author.name}
           </p>
         </Link>
         <Votes
           userId={JSON.stringify(mongoUser?._id)}
-          type='Question'
+          type='result?.Question'
           itemId={JSON.stringify(params.id)}
-          upvotes={question?.upvotes?.length || 0}
-          downvotes={question?.downvotes?.length || 0}
-          hasUpVoted={question?.upvotes?.includes(mongoUser?._id)}
-          hasDownVoted={question?.downvotes?.includes(mongoUser?._id)}
+          upvotes={result?.question?.upvotes?.length || 0}
+          downvotes={result?.question?.downvotes?.length || 0}
+          hasUpVoted={result?.question?.upvotes?.includes(mongoUser?._id)}
+          hasDownVoted={result?.question?.downvotes?.includes(mongoUser?._id)}
           hasSaved={mongoUser?.saved
             .map((id) => id.toString())
             .includes(params.id)}
-          authorId={JSON.stringify(question?.author._id)}
+          authorId={JSON.stringify(result?.question?.author._id)}
         />
       </div>
       {/* title */}
-      <h2 className='h2-semibold text-dark200_light800 '>{question?.title}</h2>
+      <h2 className='h2-semibold text-dark200_light800 '>
+        {result?.question?.title}
+      </h2>
 
       {/* metrics */}
       <div className='flex items-center gap-4'>
         <Metric
           imageUrl='/assets/icons/clock.svg'
           alt='clock icon'
-          value={getTimeStamp(question?.createdAt)}
+          value={getTimeStamp(result?.question?.createdAt)}
           title=' Votes'
           textStyles='small-medium text-dark400_light800'
         />
         <Metric
           imageUrl='/assets/icons/message.svg'
           alt='messages'
-          value={formatNumber(question?.answers?.length ?? 0)}
+          value={formatNumber(result?.question?.answers?.length ?? 0)}
           title=' Answers'
           textStyles='small-medium text-dark400_light800'
         />
         <Metric
           imageUrl='/assets/icons/eye.svg'
           alt='eye'
-          value={formatNumber(question?.views || 0)}
+          value={formatNumber(result?.question?.views || 0)}
           title=' Views'
           textStyles='small-medium text-dark400_light800'
         />
       </div>
 
-      {/* question content */}
-      <ParseHTML data={question?.content} />
+      {/* result?.question content */}
+      <ParseHTML data={result?.question?.content} />
 
-      {/* questions tags */}
+      {/* result?.questions tags */}
       <div className='flex flex-wrap gap-2'>
-        {question?.tags.map((tag: any) => (
+        {result?.question?.tags.map((tag: any) => (
           <RedenerTag key={tag._id} name={tag.name} _id={tag._id} />
         ))}
       </div>
 
       <AllAnswers
-        answers={question?.answers}
-        questionId={params.id}
+        page={Number(searchParams.page || 1)}
+        answers={result?.question?.answers}
+        totalPages={result?.totalPages}
         userId={JSON.stringify(mongoUser?._id)}
       />
 
       {/* answer form */}
       <Answer
-        question={question?.content}
+        question={result?.question?.content}
         questionId={params.id}
         authorId={JSON.stringify(mongoUser?._id)}
       />

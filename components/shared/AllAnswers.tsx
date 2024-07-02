@@ -6,12 +6,12 @@ import Image from 'next/image';
 import ParseHTML from './ParseHTML';
 import Link from 'next/link';
 import Votes from './Votes';
+import PaginationComponent from './PaginationComponent';
 
 interface Props {
-  questionId: string;
   userId?: string;
-  filter?: string;
   page?: number;
+  totalPages?: number;
   answers: [
     {
       _id: string;
@@ -29,7 +29,7 @@ interface Props {
     }
   ];
 }
-const AllAnswers = ({ questionId, filter, page, answers, userId }: Props) => {
+const AllAnswers = ({ page, answers, userId, totalPages }: Props) => {
   return (
     <>
       <div className='flex items-center justify-between'>
@@ -84,6 +84,10 @@ const AllAnswers = ({ questionId, filter, page, answers, userId }: Props) => {
             <ParseHTML data={answer.content} />
           </div>
         ))}
+        <PaginationComponent
+          totalPages={totalPages || 1}
+          currentPage={page || 1}
+        />
       </div>
     </>
   );

@@ -27,6 +27,7 @@ import {
 import Answer from '@/database/answer.model';
 import Interaction from '@/database/interaction.model';
 import { ClientSession, FilterQuery } from 'mongoose';
+import page from '@/app/(root)/(home)/page';
 
 export async function getQuestions(params: GetQuestionsParams) {
   return await executeMethodWithTryCatch(async () => {
@@ -120,7 +121,7 @@ export async function createQuestion(params: CreateQuestionParams) {
 
 export async function getQuestionById(params: GetQuestionByIdParams) {
   return await executeMethodWithTryCatch(async () => {
-    const { questionId, filter } = params;
+    const { questionId, filter, page = 1 } = params;
 
     let sortAnswerOptions = {};
 
@@ -141,30 +142,37 @@ export async function getQuestionById(params: GetQuestionByIdParams) {
         break;
     }
 
-    const question = await Question.findById(questionId).populate([
-      {
-        path: 'author',
-        model: User,
-        select: 'clerkId name picture',
-      },
-      { path: 'tags', model: Tag, select: 'name _id' },
-      {
-        path: 'answers',
-        options: {
-          sort: sortAnswerOptions,
-        },
-        model: Answer,
-        populate: {
+    const [question, totalAnswerDocuments] = await Promise.all([
+      Question.findById(questionId).populate([
+        {
           path: 'author',
           model: User,
-          select: 'picture clerkId name',
+          select: 'clerkId name picture',
         },
-      },
+        { path: 'tags', model: Tag, select: 'name _id' },
+        {
+          path: 'answers',
+          options: {
+            sort: sortAnswerOptions,
+            limit: 10,
+            skip: (page - 1) * 10,
+          },
+          model: Answer,
+          populate: {
+            path: 'author',
+            model: User,
+            select: 'picture clerkId name',
+          },
+        },
+      ]),
+      Answer.countDocuments({ question: questionId }),
     ]);
 
     if (!question) throw new Error('Question not found!');
 
-    return question;
+    const totalPages = Math.ceil(totalAnswerDocuments / 10);
+
+    return { question, totalPages };
   });
 }
 
