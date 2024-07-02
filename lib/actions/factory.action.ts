@@ -5,6 +5,7 @@ import Question from '@/database/question.model';
 import { revalidatePath } from 'next/cache';
 import { executeMethodWithTryAndTransactiona } from '../utils';
 import { DownVoteOrUpvoteParams } from './shared.types';
+import User from '@/database/user.model';
 
 export async function upVote(params: DownVoteOrUpvoteParams) {
   await executeMethodWithTryAndTransactiona(async () => {
@@ -27,11 +28,21 @@ export async function upVote(params: DownVoteOrUpvoteParams) {
 
     const mongoModel = type === 'Question' ? Question : Answer;
 
-    const result = await mongoModel.findByIdAndUpdate(itemId, updateQuery, {
-      new: true,
-    });
+    // eslint-disable-next-line no-unused-vars
+    const [_, result] = await Promise.all([
+      User.findByIdAndUpdate(userId, {
+        $inc: { reputation: hasUpVoted ? -1 : 1 },
+      }),
+      mongoModel.findByIdAndUpdate(itemId, updateQuery, {
+        new: true,
+      }),
+    ]);
 
     if (!result) throw new Error(`${type} not found!`);
+
+    await User.findByIdAndUpdate(result.author, {
+      $inc: { reputation: hasUpVoted ? -10 : 10 },
+    });
 
     revalidatePath(route);
   });
@@ -58,11 +69,29 @@ export async function downVote(params: DownVoteOrUpvoteParams) {
 
     const mongoModel = type === 'Question' ? Question : Answer;
 
-    const result = await mongoModel.findByIdAndUpdate(itemId, updateQuery, {
-      new: true,
-    });
+    // eslint-disable-next-line no-unused-vars
+    const [_, result] = await Promise.all([
+      User.findByIdAndUpdate(userId, {
+        $inc: {
+          reputation: hasDownVoted
+            ? type === 'answer'
+              ? 2
+              : 1
+            : type === 'answer'
+            ? -2
+            : -1,
+        },
+      }),
+      mongoModel.findByIdAndUpdate(itemId, updateQuery, {
+        new: true,
+      }),
+    ]);
 
     if (!result) throw new Error(`${type} not found!`);
+
+    await User.findByIdAndUpdate(result.author, {
+      $inc: { reputation: hasDownVoted ? 10 : -10 },
+    });
 
     revalidatePath(route);
   });

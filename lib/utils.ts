@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { connectToDatabase } from './mongoose';
-import mongoose from 'mongoose';
+import mongoose, { ClientSession } from 'mongoose';
 import qs from 'query-string';
 
 export function cn(...inputs: ClassValue[]) {
@@ -56,7 +56,7 @@ export async function executeMethodWithTryAndTransactiona(
     console.error(error);
     throw error;
   }
-  const session = await mongoose.startSession();
+  const session: ClientSession = await mongoose.startSession();
   session.startTransaction();
   try {
     const result = await executeFunction();

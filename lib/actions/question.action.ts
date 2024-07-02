@@ -26,7 +26,7 @@ import {
 
 import Answer from '@/database/answer.model';
 import Interaction from '@/database/interaction.model';
-import { FilterQuery } from 'mongoose';
+import { ClientSession, FilterQuery } from 'mongoose';
 
 export async function getQuestions(params: GetQuestionsParams) {
   return await executeMethodWithTryCatch(async () => {
@@ -78,7 +78,7 @@ export async function getQuestions(params: GetQuestionsParams) {
 }
 
 export async function createQuestion(params: CreateQuestionParams) {
-  await executeMethodWithTryAndTransactiona(async () => {
+  await executeMethodWithTryAndTransactiona(async (session: ClientSession) => {
     const { title, content, tags, author, path } = params;
 
     const question = await Question.create({ title, content, author });
@@ -97,9 +97,22 @@ export async function createQuestion(params: CreateQuestionParams) {
       tagDocuments.push(existingTag._id.toString());
     }
 
-    await Question.findByIdAndUpdate(question._id, {
-      $push: { tags: { $each: tagDocuments } },
-    });
+    await Promise.all([
+      User.findByIdAndUpdate(author, { $inc: { reputation: 5 } }, { session }),
+      Question.findByIdAndUpdate(
+        question._id,
+        {
+          $push: { tags: { $each: tagDocuments } },
+        },
+        { session }
+      ),
+      Interaction.create({
+        question: question._id,
+        user: author,
+        action: 'ask_question',
+        tags: tagDocuments,
+      }),
+    ]);
 
     revalidatePath(path);
   });
@@ -166,7 +179,7 @@ export async function getQuestionById(params: GetQuestionByIdParams) {
 }
 
 export async function deleteQuestion(params: DeleteQuestionParams) {
-  await executeMethodWithTryAndTransactiona(async () => {
+  await executeMethodWithTryAndTransactiona(async (session: ClientSession) => {
     const { clerkId, itemId, route } = params;
 
     const user = await User.findOne({ clerkId });
@@ -181,11 +194,12 @@ export async function deleteQuestion(params: DeleteQuestionParams) {
     if (!deletedQuestion) throw new Error('Fail to delete question!');
 
     await Promise.all([
-      Interaction.deleteMany({ question: deletedQuestion._id }),
-      Answer.deleteMany({ question: deletedQuestion._id }),
+      Interaction.deleteMany({ question: deletedQuestion._id }, { session }),
+      Answer.deleteMany({ question: deletedQuestion._id }, { session }),
       Tag.updateMany(
         { questions: deletedQuestion._id },
-        { $pull: { questions: deletedQuestion._id } }
+        { $pull: { questions: deletedQuestion._id } },
+        { session }
       ),
     ]);
 
@@ -196,7 +210,7 @@ export async function deleteQuestion(params: DeleteQuestionParams) {
 export async function getQuestionToBeEdited(
   params: getQuestionToBeEditedParams
 ) {
-  return await executeMethodWithTryAndTransactiona(async () => {
+  return await executeMethodWithTryCatch(async () => {
     const { id, clerkId } = params;
 
     const question = await Question.findOne({ _id: id })
@@ -219,7 +233,7 @@ export async function getQuestionToBeEdited(
 }
 
 export async function updateQuestion(params: UpdateQuestionParams) {
-  await executeMethodWithTryAndTransactiona(async () => {
+  await executeMethodWithTryAndTransactiona(async (session: ClientSession) => {
     const { title, content, tags, path, questionId } = params;
 
     const question = await Question.findById(questionId).populate({
@@ -241,7 +255,7 @@ export async function updateQuestion(params: UpdateQuestionParams) {
           name: { $regex: new RegExp(`^${tag}`, 'i') },
         },
         { $setOnInsert: { name: tag }, $push: { questions: questionId } },
-        { new: true, upsert: true }
+        { new: true, upsert: true, session }
       );
       question.tags.push(tagFromDb._id);
     }
@@ -252,7 +266,8 @@ export async function updateQuestion(params: UpdateQuestionParams) {
 
     await Tag.updateMany(
       { name: { $in: tagsToRemove } },
-      { $pull: { questions: questionId } }
+      { $pull: { questions: questionId } },
+      { session }
     );
 
     question.content = content;
@@ -260,7 +275,7 @@ export async function updateQuestion(params: UpdateQuestionParams) {
     question.tags = question.tags.filter(
       (tag: ITag) => !tagsToRemove.includes(tag.name)
     );
-    await question.save();
+    await question.save({ session });
 
     revalidatePath(path);
   });

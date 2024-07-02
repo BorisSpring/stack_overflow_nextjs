@@ -34,9 +34,7 @@ const Votes = ({
   const router = useRouter();
 
   const handleSave = async () => {
-    if (type !== 'Question' || !userId) return;
-
-    if (hasSaved === undefined) return;
+    if (type !== 'Question' || !userId || hasSaved === undefined) return;
 
     await toggleSaveQuestion({
       questionId: JSON.parse(itemId),

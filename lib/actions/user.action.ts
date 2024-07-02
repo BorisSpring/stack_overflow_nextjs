@@ -208,7 +208,7 @@ export async function getUserTopQuestions(params: getUserTopQuestionsParams) {
       .select(
         'title content  tags  views upvotes  downvotes  author  createdAt'
       )
-      .sort({ views: -1, upvotes: -1 })
+      .sort({ createdAt: -1, views: -1, upvotes: -1 })
       .populate([
         { path: 'author', model: User, select: 'name picture clerkId' },
         { path: 'tags', model: Tag, select: 'name' },
