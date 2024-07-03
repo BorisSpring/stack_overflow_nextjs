@@ -30,7 +30,7 @@ import { ClientSession, FilterQuery } from 'mongoose';
 
 export async function getQuestions(params: GetQuestionsParams) {
   return await executeMethodWithTryCatch(async () => {
-    const { searchQuery, page = 1, pageSize = 2, filter } = params;
+    const { searchQuery, page = 1, pageSize = 10, filter } = params;
 
     const query: FilterQuery<typeof Question> = searchQuery
       ? {
