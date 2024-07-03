@@ -9,18 +9,25 @@ import {
 } from '@/components/ui/sheet';
 import { sidebarLinks } from '@/constants';
 import Link from 'next/link';
-import { SignedOut } from '@clerk/nextjs';
+import { SignOutButton, SignedIn, SignedOut } from '@clerk/nextjs';
 import { Button } from '../../ui/button';
 import { usePathname } from 'next/navigation';
 
-export const NavContent = () => {
+interface Props {
+  clerkId?: string | null;
+}
+
+export const NavContent = ({ clerkId }: Props) => {
   const pathName = usePathname();
   return (
-    <section className='no-focus flex w-[302px]  flex-col gap-2  pt-16 '>
+    <section className=' no-focus flex w-[302px]  flex-col gap-2 pt-16 focus:ring-0 '>
       {sidebarLinks.map(({ imgURL, route, label }) => {
         const isActive = pathName === route;
+        if (route === '/profile') {
+          route = clerkId ? `${route}/${clerkId}` : '/sign-in';
+        }
         return (
-          <SheetClose asChild key={route}>
+          <SheetClose asChild key={route} className=' no-focus '>
             <Link
               href={route}
               className={`  flex w-full items-center justify-start gap-4  bg-transparent p-4 ${
@@ -47,7 +54,7 @@ export const NavContent = () => {
   );
 };
 
-const MobileNav = () => {
+const MobileNav = ({ clerkId }: Props) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -60,51 +67,58 @@ const MobileNav = () => {
         />
       </SheetTrigger>
       <SheetContent
+        aria-describedby='Navigation'
         side='left'
-        className=' w-[350px] border-none bg-light-900 dark:bg-dark-200'
+        className='no-focus flex min-h-screen w-[350px] flex-col justify-between overflow-y-auto border-none bg-light-900  dark:bg-dark-200'
       >
-        <Link href='/' className='flex items-center gap-1'>
-          <Image
-            src='/assets/images/site-logo.svg'
-            width={23}
-            height={23}
-            alt='Devflow'
-          />
-          <p className=' h2-bold  text-dark-100 dark:text-light-900 '>
-            Dev <span className=' text-primary-500'>Overflow</span>
-          </p>
-        </Link>
         <div>
-          <SheetClose>
-            <NavContent />
+          <Link href='/' className='flex items-center gap-1'>
+            <Image
+              src='/assets/images/site-logo.svg'
+              width={23}
+              height={23}
+              alt='Devflow'
+            />
+            <p className=' h2-bold  text-dark-100 dark:text-light-900 '>
+              Dev <span className=' text-primary-500'>Overflow</span>
+            </p>
+          </Link>
+          <SheetClose className='no-focus'>
+            <NavContent clerkId={clerkId} />
           </SheetClose>
-
-          <SignedOut>
-            <div className='flex flex-col gap-3'>
-              {/* sign in */}
-              <SheetClose asChild>
-                <Link href='/sign-in'>
-                  <Button className='small-medium btn-secondary min-h-[41px] w-full rounded-[10px] px-4 py-3 shadow-none dark:bg-dark-400'>
-                    <span className=' primary-text-gradient font-semibold'>
-                      Log In
-                    </span>
-                  </Button>
-                </Link>
-              </SheetClose>
-
-              {/* sign up */}
-              <SheetClose asChild>
-                <Link href='/sign-up'>
-                  <Button className='small-medium btn-secondary min-h-[41px] w-full rounded-[10px] px-4 py-3 shadow-none dark:bg-dark-300'>
-                    <span className='font-semibold text-dark-400 dark:text-light-700'>
-                      Sign up
-                    </span>
-                  </Button>
-                </Link>
-              </SheetClose>
-            </div>
-          </SignedOut>
         </div>
+        <SignedOut>
+          <div className='mt-10 flex flex-col gap-3'>
+            <SheetClose asChild>
+              <Link href='/sign-in'>
+                <Button className='small-medium btn-secondary min-h-[41px] w-full rounded-[10px] px-4 py-3 shadow-none dark:bg-dark-400'>
+                  <span className=' primary-text-gradient font-semibold'>
+                    Log In
+                  </span>
+                </Button>
+              </Link>
+            </SheetClose>
+
+            <SheetClose asChild>
+              <Link href='/sign-up'>
+                <Button className='small-medium btn-secondary min-h-[41px] w-full rounded-[10px] px-4 py-3 shadow-none dark:bg-dark-300'>
+                  <span className='font-semibold text-dark-400 dark:text-light-700'>
+                    Sign up
+                  </span>
+                </Button>
+              </Link>
+            </SheetClose>
+          </div>
+        </SignedOut>
+        <SignedIn>
+          <SignOutButton>
+            <Button className='small-medium btn-secondary min-h-[41px] w-full rounded-[10px] px-4 py-3 shadow-none dark:bg-dark-300'>
+              <span className='font-semibold text-dark-400 dark:text-light-700'>
+                Log Out
+              </span>
+            </Button>
+          </SignOutButton>
+        </SignedIn>
       </SheetContent>
     </Sheet>
   );

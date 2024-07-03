@@ -5,8 +5,10 @@ import React from 'react';
 import GlobalSearch from '../search/GlobalSearch';
 import Theme from './Theme';
 import MobileNav from './MobileNav';
+import { auth } from '@clerk/nextjs/server';
 
 const Navbar = () => {
+  const { userId } = auth();
   return (
     <nav className='background-light900_dark200 flex-between fixed z-50 w-full gap-5 p-6 shadow-light-300 dark:shadow-none sm:px-12'>
       <Link href='/' className='flex items-center gap-1'>
@@ -36,7 +38,7 @@ const Navbar = () => {
             }}
           />
         </SignedIn>
-        <MobileNav />
+        <MobileNav clerkId={userId} />
       </div>
     </nav>
   );
