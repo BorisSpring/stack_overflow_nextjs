@@ -39,3 +39,11 @@ export const GlobalSearchFilters = [
   { name: 'User', value: 'user' },
   { name: 'Tag', value: 'tag' },
 ];
+
+export const JobsFilterOptions = [
+  { name: 'All', value: 'all' },
+  { name: 'Today', value: 'today' },
+  { name: 'Last 3 Days', value: '3days' },
+  { name: 'This Week', value: 'week' },
+  { name: 'This Month', value: 'month' },
+];
