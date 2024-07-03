@@ -76,13 +76,8 @@ const Votes = ({
         `Succesfully  ${action === 'upvote' ? 'up voted' : 'down voted'}!`
       );
     } catch (error: unknown) {
-      console.log({ error });
-      if (error instanceof Error) {
-        console.log({ errorMessage: error.message });
-      }
       showToast(`Failed to ${action === 'upvote' ? 'up vote' : 'down vote'}!`);
     }
-    
   };
 
   useEffect(() => {
