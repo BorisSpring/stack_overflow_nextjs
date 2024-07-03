@@ -65,7 +65,7 @@ const QuestionCard = ({
           <Metric
             imageUrl='/assets/icons/like.svg'
             alt='Upvotes'
-            value={formatNumber(upvotes?.length ||  0)}
+            value={formatNumber(upvotes || 0)}
             title=' Votes'
             textStyles='small-medium text-dark400_light800'
           />
