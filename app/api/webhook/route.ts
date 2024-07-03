@@ -53,6 +53,7 @@ export async function POST(req: Request) {
   }
 
   const eventType = evt.type;
+  console.log({type: evt.type})
   if (eventType === 'user.created') {
     const { id, username, first_name, last_name, image_url, email_addresses } =
       evt.data;
@@ -64,12 +65,12 @@ export async function POST(req: Request) {
       username: username!,
       picture: image_url,
     });
-
+  
     return NextResponse.json({ message: 'OK', user: mongoUser });
   } else if (eventType === 'user.updated') {
     const { id, username, first_name, last_name, image_url, email_addresses } =
       evt.data;
-
+      console.log({data: evt.data})
     const mongoUser = await updateUser({
       clerkId: id,
       updatedData: {
@@ -80,7 +81,7 @@ export async function POST(req: Request) {
       },
       path: `/profile/${id}`,
     });
-
+    console.log({mongoUser})
     return NextResponse.json({ message: 'OK', user: mongoUser });
   }
 
