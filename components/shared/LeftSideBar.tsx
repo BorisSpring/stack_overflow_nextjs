@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { SignedIn, SignedOut, useAuth } from '@clerk/nextjs';
 import { Button } from '../ui/button';
+import { SignOutButton } from "@clerk/nextjs";
 
 const LeftSideBar = () => {
   const pathName = usePathname();
@@ -21,7 +22,7 @@ const LeftSideBar = () => {
             if (clerkId) {
               route = `/profile/${clerkId}`;
             } else {
-              return undefined;
+              return '/sign-in';
             }
           }
 
@@ -79,18 +80,20 @@ const LeftSideBar = () => {
             href={'/sign-up'}
             className=' flex items-center justify-center  rounded-[10px]  bg-light-700 dark:bg-dark-300'
           >
-            <Button>
-              <Image
-                width={20}
-                height={20}
-                src='/assets/icons/sign-up.svg'
-                alt='sign up icon'
-                className='invert-colors lg:hidden'
-              />
-              <p className=' text-dark300_light700 font-semibold max-lg:hidden '>
-                Sign Up
-              </p>
-            </Button>
+             <SignOutButton>
+               <Button className=' flex items-center justify-center  rounded-[10px]  bg-light-700 dark:bg-dark-300'>
+                  <Image
+                    width={20}
+                    height={20}
+                    src='/assets/icons/sign-up.svg'
+                    alt='sign up icon'
+                    className='invert-colors lg:hidden'
+                  />
+                  <p className=' text-dark300_light700 font-semibold max-lg:hidden '>
+                    Sign Up
+                  </p>
+                </Button>
+            </SignOutButton>
           </Link>
         </SignedOut>
         <SignedIn>
