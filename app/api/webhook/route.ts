@@ -53,7 +53,6 @@ export async function POST(req: Request) {
   }
 
   const eventType = evt.type;
-  console.log({type: evt.type})
   if (eventType === 'user.created') {
     const { id, username, first_name, last_name, image_url, email_addresses } =
       evt.data;
@@ -70,23 +69,21 @@ export async function POST(req: Request) {
   } else if (eventType === 'user.updated') {
     const { id, username, first_name, last_name, image_url, email_addresses } =
       evt.data;
-      console.log({data: evt.data})
+    
     const mongoUser = await updateUser({
       clerkId: id,
       updatedData: {
-        name: `${first_name} ${last_name}`,
+        name: (!first_name && !last_name) ? email_addresses[0].email_address :  `${first_name && first_name} ${last_name && last_name}` ,
         email: email_addresses[0].email_address,
         username: username!,
         picture: image_url,
       },
       path: `/profile/${id}`,
     });
-    console.log({mongoUser})
     return NextResponse.json({ message: 'OK', user: mongoUser });
   }
 
   if (eventType === 'user.deleted') {
-     console.log({data: evt.data})
     const { id } = evt.data;
     const deletedUser = await deleteUser({ clerkId: id! });
 
