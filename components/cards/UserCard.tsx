@@ -22,13 +22,15 @@ const UserCard = async ({ user }: Props) => {
       className='background-light900_dark200 w-[260px] rounded-[10px] border border-light-900 shadow-light-100  dark:border-dark-300 dark:shadow-none max-xs:w-full'
     >
       <article className=' flex flex-col items-center justify-center gap-3 px-[10px] py-[20px] '>
-        <Image
-          width={100}
-          height={100}
-          alt='User avatar'
-          src={user.picture}
-          className='rounded-full'
-        />
+        <div className="min-h-[120px]">
+          <Image
+            width={100}
+            height={100}
+            alt='User avatar'
+            src={user.picture}
+            className='rounded-full object-cover'
+          />
+        </div>
         <div>
           <h3 className='h3-bold text-dark200_light900 line-clamp-1 text-center '>
             {user.name}
