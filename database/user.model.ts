@@ -23,7 +23,11 @@ const UserSchema = new Schema<IUser>({
     trim: true,
     maxLength: [20, 'Name must be at most 20 charachters'],
   },
-  username: String,
+  username: {
+    type: String,
+    unique: false,
+    required: false
+  },
   email: { type: String, required: true, unique: true },
   password: String,
   bio: String,
