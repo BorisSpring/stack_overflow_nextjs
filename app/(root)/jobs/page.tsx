@@ -19,7 +19,7 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
       <h1 className='h2-bold text-dark100_light900 text-center font-bold sm:text-left'>
         Jobs
       </h1>
-      {/* <div className='mt-11 flex flex-col justify-between gap-5  md:flex-row '>
+      <div className='mt-11 flex flex-col justify-between gap-5  md:flex-row '>
         <LocalSearchBar
           iconPosition='left'
           route='/'
@@ -32,7 +32,7 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
           otherClasses='md:min-h-[56px] min-w-[170px]'
           containerClasses='flex'
         />
-      </div> */}
+      </div>
       <div className='mt-8 flex flex-col gap-5'>
         {jobs?.length > 0 ? (
           jobs.map((job: any) => (
