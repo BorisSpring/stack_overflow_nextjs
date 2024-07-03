@@ -23,7 +23,7 @@ const JobCard = ({
   job_state,
 }: Props) => {
   return (
-    <div className='flex flex-col gap-3 rounded-[8px] bg-light-800 p-5 shadow-light-100 dark:bg-dark-300 dark:shadow-none sm:flex-row sm:gap-5'>
+    <div className='flex w-full flex-col gap-3 rounded-[8px] bg-light-800 p-5 shadow-light-100 dark:bg-dark-300 dark:shadow-none sm:flex-row sm:gap-5'>
       <p className='ml-auto w-fit whitespace-nowrap rounded-[8px] bg-light-700 px-2 py-0.5  text-sm dark:bg-dark-500 dark:text-light-700 sm:hidden'>
         {job_country} {job_state} {job_city}
       </p>
@@ -34,16 +34,16 @@ const JobCard = ({
         className='mt-2 rounded-full object-contain sm:self-start'
         alt='logo'
       />
-      <div className='flex flex-col gap-3'>
+      <div className='flex w-full flex-col gap-3 '>
         <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
           <h3 className='base-semibold text-dark-100 dark:text-light-800'>
             {job_title}
           </h3>
           <p className='hidden rounded-[8px] bg-light-700 px-2 py-0.5 text-sm  dark:bg-dark-500 dark:text-light-700 sm:block '>
-            Pittsburh, PA , US
+            {job_country} {job_state} {job_city}
           </p>
         </div>
-        <p className='body-regular line-clamp-3 text-dark-300  dark:text-light-800 sm:line-clamp-2'>
+        <p className='body-regular line-clamp-2 w-[250px] text-dark-300 dark:text-light-800 sm:line-clamp-2  sm:w-[400px] xl:w-[600px]'>
           {job_description}
         </p>
         <div className='flex flex-col gap-2 sm:flex-row sm:justify-between'>
