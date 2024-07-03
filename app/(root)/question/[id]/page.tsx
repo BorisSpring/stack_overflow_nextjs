@@ -31,7 +31,7 @@ const page = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = auth();
 
   let mongoUser;
-  console.log({result})
+
   if (clerkId) {
     mongoUser = await getUserById({ userId: clerkId });
   }
@@ -57,7 +57,7 @@ const page = async ({ params, searchParams }: URLProps) => {
         </Link>
         <Votes
           userId={JSON.stringify(mongoUser?._id)}
-          type='result?.Question'
+          type='question'
           itemId={JSON.stringify(params.id)}
           upvotes={result?.question?.upvotes?.length || 0}
           downvotes={result?.question?.downvotes?.length || 0}
