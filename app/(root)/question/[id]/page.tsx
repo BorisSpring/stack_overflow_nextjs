@@ -57,7 +57,7 @@ const page = async ({ params, searchParams }: URLProps) => {
         </Link>
         <Votes
           userId={JSON.stringify(mongoUser?._id)}
-          type='question'
+          type='Question'
           itemId={JSON.stringify(params.id)}
           upvotes={result?.question?.upvotes?.length || 0}
           downvotes={result?.question?.downvotes?.length || 0}
